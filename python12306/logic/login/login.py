@@ -2,6 +2,8 @@ from global_data.session import LOGIN_SESSION
 
 from config import Config
 from global_data.url_conf import LOGIN_URLMAPPING
+from logic.login.captcha import Captcha
+from utils.log import Log
 from utils.net import send_requests, json_status
 
 
@@ -14,7 +16,14 @@ class NormalLogin(object):
 
     def _uamtk(self):
         json_data = send_requests(LOGIN_SESSION, self.URLS["uamtk"], data={'appid': 'otn'})
-        return json_status(json_data, ["result_message", "newapptk"])
+        result, msg = json_status(json_data, ["result_message", "newapptk"])
+        if not result:
+            return result, msg, None
+        else:
+            return result, msg, json_data["newapptk"]
+
+    def _passportredirect(self):
+        send_requests(LOGIN_SESSION, self.URLS["userLoginRedirect"])
 
     def _uamauthclient(self, apptk):
         json_response = send_requests(LOGIN_SESSION, self.URLS['uamauthclient'], data={'tk': apptk})
@@ -22,9 +31,25 @@ class NormalLogin(object):
         return json_status(json_response, ["username", "result_message"])
 
     def login(self):
+        self._init()
+        self._uamtk()
+        captcha = Captcha("normal")
+        status, msg = captcha.verify()
+        if not status:
+            Log.v("captcha verify failed")
+            return status, msg
         payload = {
             'username': Config.train_account.user,
             'password': Config.train_account.pwd,
             'appid': 'otn',
         }
-        jsonRet = EasyHttp.send(self._urlInfo['login'], data=payload)
+        json_response = send_requests(LOGIN_SESSION, self.URLS['login'], data=payload)
+        result, msg = json_status(json_response, [])
+        if not result:
+            return False, msg
+        self._passportredirect()
+        result, msg, apptk = self._uamtk()
+        if not result:
+            Log.v(msg)
+            return False, msg
+        return self._uamauthclient(apptk)
