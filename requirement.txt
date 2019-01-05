@@ -1,0 +1,11 @@
+requests
+Pillow
+PrettyTable
+colorama
+
+
+namedtupled
+PyYAML
+
+redis # use redis for storing cookies
+ipython # for debug
