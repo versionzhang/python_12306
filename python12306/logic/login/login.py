@@ -16,6 +16,7 @@ class NormalLogin(object):
 
     def _uamtk(self):
         json_data = send_requests(LOGIN_SESSION, self.URLS["uamtk"], data={'appid': 'otn'})
+        Log.v(json_data)
         result, msg = json_status(json_data, ["result_message", "newapptk"])
         if not result:
             return result, msg, None
@@ -27,12 +28,11 @@ class NormalLogin(object):
 
     def _uamauthclient(self, apptk):
         json_response = send_requests(LOGIN_SESSION, self.URLS['uamauthclient'], data={'tk': apptk})
-        print(json_response)
+        Log.v(json_response)
         return json_status(json_response, ["username", "result_message"])
 
     def login(self):
         self._init()
-        self._uamtk()
         captcha = Captcha("normal")
         status, msg = captcha.verify()
         if not status:
@@ -42,9 +42,11 @@ class NormalLogin(object):
             'username': Config.train_account.user,
             'password': Config.train_account.pwd,
             'appid': 'otn',
+            'answer': captcha.results
         }
         json_response = send_requests(LOGIN_SESSION, self.URLS['login'], data=payload)
-        result, msg = json_status(json_response, [])
+        Log.v(json_response)
+        result, msg = json_status(json_response, [], '0')
         if not result:
             return False, msg
         self._passportredirect()
@@ -52,4 +54,5 @@ class NormalLogin(object):
         if not result:
             Log.v(msg)
             return False, msg
-        return self._uamauthclient(apptk)
+        status, msg = self._uamauthclient(apptk)
+        return status, msg

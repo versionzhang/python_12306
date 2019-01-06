@@ -1,3 +1,4 @@
+import base64
 from io import BytesIO
 
 from PIL import Image
@@ -6,7 +7,7 @@ from global_data.session import LOGIN_SESSION
 from global_data.url_conf import LOGIN_URLMAPPING
 from utils.log import Log
 
-from utils.net import send_requests, json_status
+from utils.net import send_requests, json_status, send_captcha_requests, get_captcha_image
 
 
 class NormalCaptchaUtil(object):
@@ -14,20 +15,21 @@ class NormalCaptchaUtil(object):
 
     @staticmethod
     def getcaptcha():
-        img_binary = send_requests(LOGIN_SESSION, LOGIN_URLMAPPING["normal"]["captcha"])
+        data = get_captcha_image(LOGIN_SESSION, LOGIN_URLMAPPING["normal"]["captcha"])
+        img_binary = base64.b64decode(data["image"])
         return img_binary
 
     def check(self, results):
-        form_data = {
-            'randCode': results,
+        params_data = {
+            'answer': results,
             'rand': 'sjrand',
+            'login_site': 'E'
         }
-
-        json_response = send_requests(LOGIN_SESSION,
-                                      LOGIN_URLMAPPING["normal"]["captchaCheck"],
-                                      data=form_data)
+        json_response = send_captcha_requests(LOGIN_SESSION,
+                                              LOGIN_URLMAPPING["normal"]["captchaCheck"],
+                                              params=params_data)
         Log.v('normal login captcha verify: %s' % json_response)
-        return json_status(json_response, (), self.success_code)
+        return json_status(json_response, [], ok_code=self.success_code)
 
 
 class OtherCaptchaUtil(object):
@@ -35,7 +37,8 @@ class OtherCaptchaUtil(object):
 
     @staticmethod
     def getcaptcha():
-        img_binary = send_requests(LOGIN_SESSION, LOGIN_URLMAPPING["other"]["captcha"])
+        data = get_captcha_image(LOGIN_SESSION, LOGIN_URLMAPPING["other"]["captcha"])
+        img_binary = base64.b64decode(data["image"]).encode()
         return img_binary
 
     def check(self, results):
@@ -58,6 +61,7 @@ class OtherCaptchaUtil(object):
 
 class Captcha(object):
     captcha = {"normal": NormalCaptchaUtil(), "other": OtherCaptchaUtil()}
+    results = ''
 
     def __init__(self, login_type):
         self.login_type = login_type
@@ -77,13 +81,7 @@ class Captcha(object):
         return ','.join(results)
 
     def verify(self):
-        # try five times.
-        for v in range(5):
-            try:
-                img = Image.open(BytesIO(self.getcaptcha()))
-                break
-            except OSError:
-                continue
+        img = Image.open(BytesIO(self.getcaptcha()))
         img.show()
         Log.v(
             """ 
@@ -95,5 +93,5 @@ class Captcha(object):
         results = input("输入验证码索引(见上图，以','分割）: ")
         img.close()
         trans = self.trans_captcha_results(results)
-        print(trans)
+        self.results = trans
         return self.check(trans)

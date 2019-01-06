@@ -1,5 +1,6 @@
 # copy url config from easytrain repo.
 import random
+import time
 
 from utils.data_structure import UrlMapping
 
@@ -25,14 +26,17 @@ LOGIN_URLS = {
         },
         'captcha': {
             # use lambda function, every time to generator a different number.
-            'url': lambda: r'https://kyfw.12306.cn/passport/captcha/captcha-image?login_site=E&module=login&rand=sjrand&{}'
-                .format(random.random()),
+            # change this link, because of web change this interface.
+            'url': lambda: r'https://kyfw.12306.cn/passport/captcha/captcha-image64?login_site=E&module=login&rand=sjrand&{}'.format(
+                int(time.time()*1000)
+            ),
             'method': 'GET',
-            'response': 'binary'
+            'response': 'json'
         },
         'captchaCheck': {
             'url': r'https://kyfw.12306.cn/passport/captcha/captcha-check',
-            'method': 'POST',
+            # 2019.01.06 use get method.
+            'method': 'GET',
             'headers': {
                 'Content-Type': r'application/x-www-form-urlencoded; charset=UTF-8',
                 'Referer': r'https://kyfw.12306.cn/otn/login/init',
