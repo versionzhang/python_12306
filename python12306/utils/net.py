@@ -1,15 +1,8 @@
 import xml.etree.ElementTree as ET
 import requests
 
+from comonexception import ResponseError, ResponseCodeError
 from utils.log import Log
-
-
-class ResponseError(Exception):
-    pass
-
-
-class ResponseCodeError(Exception):
-    pass
 
 
 def send_captcha_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
@@ -29,6 +22,7 @@ def send_captcha_requests(session, urlmapping_obj, params=None, data=None, **kwa
                                timeout=10,
                                # allow_redirects=False,
                                **kwargs)
+    Log.v(urlmapping_obj.url)
     if response.status_code == requests.codes.ok:
         if 'xhtml+xml' in response.headers['Content-Type']:
             data = response.text
@@ -39,8 +33,12 @@ def send_captcha_requests(session, urlmapping_obj, params=None, data=None, **kwa
         elif 'json' in response.headers['Content-Type']:
             return response.json()
         else:
+            Log.w(response.url)
+            Log.w(response.status_code)
             raise ResponseError
     else:
+        Log.w(response.url)
+        Log.w(response.status_code)
         raise ResponseCodeError
 
 
@@ -73,8 +71,12 @@ def get_captcha_image(session, urlmapping_obj, params=None, data=None, **kwargs)
         elif 'json' in response.headers['Content-Type']:
             return response.json()
         else:
+            Log.w(response.url)
+            Log.w(response.status_code)
             raise ResponseError
     else:
+        Log.w(response.url)
+        Log.w(response.status_code)
         raise ResponseCodeError
 
 
@@ -103,6 +105,17 @@ def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
     except Exception as e:
         Log.e(e)
     return None
+
+
+def submit_response_checker(response, ok_columns, ok_code):
+    if not isinstance(response, (list, dict)):
+        return False, '数据非json数据'
+    for v in ok_columns:
+        if v not in response:
+            return False, "字段不存在检查失败"
+        elif response[v] != ok_code:
+            return False, "字段状态不存在"
+    return True, "OK"
 
 
 def json_status(json_response, check_column, ok_code=0):

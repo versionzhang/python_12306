@@ -146,16 +146,15 @@ LOGIN_URLS = {
     },
 }
 
-queryUrls = {
-    'query': {
+QUERY_URL = {
         'url': r'https://kyfw.12306.cn/otn/leftTicket/queryZ',
         'method': 'GET',
         'headers': {
             'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init',
         }
-    },
 }
-submitUrls = {
+
+SUBMIT_URLS = {
     'dc': {
         'submitOrderRequest': {
             'url': r'https://kyfw.12306.cn/otn/leftTicket/submitOrderRequest',
@@ -290,5 +289,6 @@ submitUrls = {
 }
 
 LOGIN_URLMAPPING = {key: {key1: UrlMapping(v1) for key1, v1 in v.items()} for key, v in LOGIN_URLS.items()}
-
+QUERY_URL_MAPPING = UrlMapping(QUERY_URL)
+SUBMIT_URL_MAPPING = {key: {key1: UrlMapping(v1) for key1, v1 in v.items()} for key, v in LOGIN_URLS.items()}
 

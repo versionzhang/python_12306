@@ -64,6 +64,19 @@ class CityTool(object):
         ) for v in data]
         return self
 
+    def find_city_by_name(self, name):
+        data = list(filter(lambda x: x.name == name, self.citydata))
+        if data:
+            return data[0]
+        else:
+            return None
+
+    def find_city_by_code(self, code):
+        data = list(filter(lambda x: x.code == code, self.citydata))
+        if data:
+            return data[0]
+        else:
+            return None
 
     def get_final_data(self):
         d = self.load_exists_data()

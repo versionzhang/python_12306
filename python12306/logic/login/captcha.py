@@ -3,11 +3,56 @@ from io import BytesIO
 
 from PIL import Image
 
+import requests
+from hashlib import md5
+
 from global_data.session import LOGIN_SESSION
 from global_data.url_conf import LOGIN_URLMAPPING
+from global_data.useragent import CHROME_USER_AGENT
+
+from config import Config
 from utils.log import Log
 
 from utils.net import send_requests, json_status, send_captcha_requests, get_captcha_image
+
+
+
+class RClient(object):
+
+    def __init__(self):
+        self.username = Config.auto_code_account_ruokuai.user
+        self.password = md5(Config.auto_code_account_ruokuai.pwd.encode()).hexdigest()
+        self.soft_id = "119728"
+        self.soft_key = "860e0eb28055431192d8dec771135ec8"
+        self.base_params = {
+            'username': self.username,
+            'password': self.password,
+            'softid': self.soft_id,
+            'softkey': self.soft_key,
+        }
+        self.headers = {
+            'Connection': 'Keep-Alive',
+            'Host': 'api.ruokuai.com',
+            'User-Agent': CHROME_USER_AGENT,
+        }
+
+    def rk_create(self, im_string, timeout=60):
+        """
+        im: 图片字节
+        im_type: 题目类型
+        """
+        params = {
+            'typeid': 6113,
+            'timeout': timeout,
+        }
+        params.update(self.base_params)
+        files = {'image': ('a.jpg', im_string)}
+        r = requests.post('http://api.ruokuai.com/create.json', data=params, files=files, headers=self.headers)
+        #
+        Log.v("使用若快进行验证码识别")
+        data = r.json()
+        Log.v(data)
+        return data
 
 
 class NormalCaptchaUtil(object):
@@ -63,9 +108,15 @@ class Captcha(object):
     captcha = {"normal": NormalCaptchaUtil(), "other": OtherCaptchaUtil()}
     results = ''
 
-    def __init__(self, login_type):
+    def __init__(self, login_type, method='hand'):
+        """
+
+        :param login_type: normal
+        :param method: hand (手动打码) ruokuai(若快打码)
+        """
         self.login_type = login_type
         self.util = self.captcha[self.login_type]
+        self.method = method
 
     def __getattribute__(self, item):
         if item in ("getcaptcha", "check"):
@@ -80,8 +131,39 @@ class Captcha(object):
             results.append(coordinates[int(index)])
         return ','.join(results)
 
+    def generator_image(self):
+        while True:
+            data = self.getcaptcha()
+            try:
+                img = Image.open(BytesIO(data))
+                img.close()
+                break
+            except OSError:
+                Log.e("获取验证码图片失败, 重试获取")
+                continue
+        return data
+
     def verify(self):
-        img = Image.open(BytesIO(self.getcaptcha()))
+        if Config.auto_code_enable and Config.auto_code_method == 'ruokuai':
+            self.method = 'ruokuai'
+        m = getattr(self, "verifyhandle_{method}".format(method=self.method))
+        return m()
+
+    def verifyhandle_ruokuai(self):
+        c = RClient()
+        data = c.rk_create(self.generator_image())
+        if "Result" in data:
+            trans = self.trans_captcha_results(','.join([str(int(v)-1) for v in data["Result"]]))
+            self.results = trans
+            return self.check(trans)
+        else:
+            if "Error" in data and data["Error"]:
+                Log.e("打码平台错误: {0}, 请登录打码平台查看-http://www.ruokuai.com/client/index?6726".format(data["Error"]))
+                return False, "若快打码平台错误"
+
+
+    def verifyhandle_hand(self):
+        img = Image.open(BytesIO(self.generator_image()))
         img.show()
         Log.v(
             """ 

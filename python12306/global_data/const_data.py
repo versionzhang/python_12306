@@ -80,6 +80,22 @@ TICKET_DATA = [
     }
 ]
 
-TourTypeList  = [ TourMapping(v) for v in TOUR_DATA]
-SeatTypeList = [ SeatMapping(v) for v in SEAT_DATA]
-TicketTypeList = [ TicketMapping(v) for v in TICKET_DATA]
+TourTypeList  = [TourMapping(v) for v in TOUR_DATA]
+SeatTypeList = [SeatMapping(v) for v in SEAT_DATA]
+TicketTypeList = [TicketMapping(v) for v in TICKET_DATA]
+
+
+
+def find_by_name(f_type, name):
+    """
+    :param f_type: "seat" "tour" "ticket"
+    :param name:
+    :return:
+    """
+    m = dict(seat=SeatTypeList, tour=TourTypeList, ticket=TicketTypeList)
+    data = list(filter(lambda x: x.name == name, m[f_type]))
+    if data:
+        return data[0]
+    else:
+        return None
+
