@@ -19,6 +19,10 @@ __pycache__
 .python-version
 *.mmdb
 
+# log file
+*.log
+
+
 # IDE files
 .project
 .pydevproject
