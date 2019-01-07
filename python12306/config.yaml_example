@@ -1,0 +1,85 @@
+---
+basic_config:
+  # 出发日期(list)，格式ex：
+  travel_dates:
+    # current use one value
+    "2019-01-27"
+
+  ticket_type:
+    # 目前取值有两种
+    # 成人票或者学生票
+    "成人票"
+
+  # 是否根据时间范围 和 乘车类型 购票
+  # 否则将需要手动填写车次
+  manual_trainnum_enable: False
+
+  # 列车类型: 高铁 G 动车 D 其它火车 O
+  # train_types: [G,D,O]
+  train_types: [G]
+
+  # 可接受最早出发时间 格式ex：
+  earliest_time: "00:00"
+
+  # 可接受最晚抵达时间 格式ex：
+  latest_time: "24:00"
+
+  # 过滤车次(list)，格式ex：
+  # - "G1353"
+  train_list:
+    - "G542"
+
+  # 出发城市，比如深圳北，就填深圳就搜得到
+  from_station: "广州"
+
+  # 到达城市 比如深圳北，就填深圳就搜得到
+  to_station: "郑州"
+
+  # 座位(list) 多个座位ex:
+  # - "二等座"
+  # - "一等座"
+  ticket_types:
+    - "二等座"
+
+  # 乘车人(list) 多个乘车人ex:
+  # - "张三"
+  # - "李四"
+  ticket_people_list:
+    - "张三"
+  # 12306登录账号(list)
+
+# 加入小黑屋时间，此功能为了防止僵尸票导致一直下单不成功错过正常的票
+  retry_order_time: 5
+
+train_account:
+  user: "12306账号"
+  pwd: "12306密码"
+
+# 是否使用自动打码平台, True or False
+auto_code_enable: True
+
+# 目前只支持使用若快打验证码, 其他的暂时还没接入
+auto_code_method: ruokuai
+# # 打码平台账号
+auto_code_account_ruokuai:
+  user: "打码平台用户名"
+  pwd: "打码平台密码"
+
+# #  邮箱配置，如果抢票成功，将通过邮件配置通知给您
+email_config:
+  from_email: "发件人邮箱地址"
+  notice_email_list:
+    - "通知人邮箱地址"
+  username: "发件人的登录邮箱用户名"
+  password: "发件人的邮箱密码"
+  # email 网关
+  email_gateway: "smtp.qq.com"
+  # email 网关端口
+  email_port: 25
+
+# 是否开启邮箱通知, True or False
+email_notice_enable: True
+# 是否开启cdn查询, True or False
+cdn_enable: True
+
+
