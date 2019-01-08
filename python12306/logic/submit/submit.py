@@ -145,10 +145,9 @@ class NormalSubmitDcOrder(object):
             '_json_att': '',
             'REPEAT_SUBMIT_TOKEN': self.token
         }
-        json_response = send_requests(LOGIN_SESSION, self.URLS['checkOrderInfo'], data=form_data)
-        Log.v('校验订单信息返回json数据 %s' % json_response)
         json_response = send_requests(LOGIN_SESSION, self.URLS['getQueueCount'], data=form_data)
-        status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True)
+        Log.v('get_queue_count 返回json数据 %s' % json_response)
+        status, msg = submit_response_checker(json_response, ["status"], True)
         if status:
             self.left_tickets = json_response['data']['ticket']
             self.persons_count = json_response['data']['count']
@@ -191,7 +190,7 @@ class NormalSubmitDcOrder(object):
             self.order_id = json_response['data']['orderId']
         return status, msg
 
-    def __wait_for_order_id(self):
+    def _wait_for_order_id(self):
         # 排队逻辑
         t = datetime.datetime.now()
         delta = datetime.timedelta(minutes=10)
