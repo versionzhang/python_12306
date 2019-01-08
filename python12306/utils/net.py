@@ -1,3 +1,4 @@
+import copy
 import xml.etree.ElementTree as ET
 import requests
 
@@ -73,7 +74,7 @@ def get_captcha_image(session, urlmapping_obj, params=None, data=None, **kwargs)
         else:
             Log.w(response.url)
             Log.w(response.status_code)
-            raise ResponseError
+            return response.text
     else:
         Log.w(response.url)
         Log.w(response.status_code)
@@ -108,13 +109,22 @@ def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
 
 
 def submit_response_checker(response, ok_columns, ok_code):
+    back_response = copy.copy(response)
     if not isinstance(response, (list, dict)):
         return False, '数据非json数据'
     for v in ok_columns:
-        if v not in response:
-            return False, "字段不存在检查失败"
-        elif response[v] != ok_code:
+        response = back_response
+        nest = v.split('.')
+        for v1 in nest:
+            print(v1)
+            r = response.get(v1, None)
+            if not r:
+                return False, "字段不存在检查失败"
+            else:
+                response = r
+        if response != ok_code:
             return False, "字段状态不存在"
+    del back_response
     return True, "OK"
 
 
@@ -125,6 +135,8 @@ def json_status(json_response, check_column, ok_code=0):
     :param check_column: check column, add column missing message
     :return:
     """
+    if not isinstance(json_response, (list, dict)):
+        return False, '数据非json数据'
     status = json_response.get('result_code', None) == ok_code
     if status:
         return status, "OK"

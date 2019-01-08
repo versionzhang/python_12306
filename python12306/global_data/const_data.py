@@ -99,3 +99,14 @@ def find_by_name(f_type, name):
     else:
         return None
 
+
+def find_by_names(f_type, names):
+    """
+    :param f_type: "seat" "tour" "ticket"
+    :param names:
+    :return:
+    """
+    m = dict(seat=SeatTypeList, tour=TourTypeList, ticket=TicketTypeList)
+    data = list(filter(lambda x: x.name in names, m[f_type]))
+    return data
+

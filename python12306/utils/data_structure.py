@@ -221,3 +221,14 @@ class TrainDetail(object):
                                         "verbose": v["verbose"],
                                         "display": v.get("display", True),
                                         "value": CityData.find_city_by_code(data[v["index"]])}))
+
+
+class PassengerDetail(BasicMapping):
+    __slots__ = ("passenger_name", "code", "sex_code", "sex_name",
+                 "born_date", "country_code", "passenger_id_type_code",
+                 "passenger_id_type_name", "passenger_id_no",
+                 "passenger_type", "passenger_flag",
+                 "passenger_type_name", "mobile_no", "phone_no",
+                 "email", "address", "postalcode", "first_letter",
+                 "recordCount", "total_times", "index_id"
+                )

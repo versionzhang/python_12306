@@ -48,7 +48,10 @@ basic_config:
     - "张三"
   # 12306登录账号(list)
 
-# 加入小黑屋时间，此功能为了防止僵尸票导致一直下单不成功错过正常的票
+  # retry login
+  retry_login_time: 5
+
+  # 加入小黑屋时间，此功能为了防止僵尸票导致一直下单不成功错过正常的票
   retry_order_time: 5
 
 train_account:

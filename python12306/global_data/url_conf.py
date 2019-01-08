@@ -290,5 +290,5 @@ SUBMIT_URLS = {
 
 LOGIN_URLMAPPING = {key: {key1: UrlMapping(v1) for key1, v1 in v.items()} for key, v in LOGIN_URLS.items()}
 QUERY_URL_MAPPING = UrlMapping(QUERY_URL)
-SUBMIT_URL_MAPPING = {key: {key1: UrlMapping(v1) for key1, v1 in v.items()} for key, v in LOGIN_URLS.items()}
+SUBMIT_URL_MAPPING = {key: {key1: UrlMapping(v1) for key1, v1 in v.items()} for key, v in SUBMIT_URLS.items()}
 

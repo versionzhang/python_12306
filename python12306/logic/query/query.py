@@ -1,9 +1,10 @@
+import copy
+
 from prettytable import PrettyTable
 
 from config import Config
-from global_data.const_data import find_by_name
+from global_data.const_data import find_by_name, find_by_names
 from global_data.url_conf import QUERY_URL_MAPPING
-from logic.login.login import NormalLogin
 from pre_processing.citys import CityData
 from utils.log import Log
 
@@ -14,7 +15,7 @@ from utils.data_structure import TrainDetail
 
 
 class Query(object):
-    # TODO: add filter to query.
+
     @staticmethod
     def run_query():
         params = {
@@ -27,12 +28,11 @@ class Query(object):
         json_response = send_requests(LOGIN_SESSION, QUERY_URL_MAPPING, params=params)
         if not isinstance(json_response, (list, dict)):
             return []
-        return json_response['data']['result'] or []
+        return [TrainDetail(v.split('|')) for v in json_response['data']['result']] or []
 
     @staticmethod
-    def pretty_output(raw_train_data):
+    def pretty_output(t):
         table = PrettyTable()
-        t = TrainDetail(raw_train_data.split('|'))
         table.field_names = [getattr(t, v).verbose for v in t.__slots__ if getattr(t, v).display]
         fields = [v for v in t.__slots__ if getattr(t, v).display]
         table.add_row([getattr(t, v).value if isinstance(getattr(t, v).value, str) and getattr(t, v).display
@@ -40,7 +40,38 @@ class Query(object):
                       )
         print(table)
 
-    def output_to_console(self):
-        data = self.run_query()
+    def output_to_console(self, data):
         for v in data:
             self.pretty_output(v)
+
+
+    def filter(self):
+        data = self.run_query()
+        q = QueryFilter(data)
+        q.filter_by_seat()
+        self.pretty_output(q.result[0])
+        return q.result[0]
+        # for v in q.result:
+        #     self.pretty_output(v)
+
+
+
+class QueryFilter(object):
+    def __init__(self, data):
+        self.data = data
+        self.result = []
+
+    def filter_by_seat(self):
+        seat_objs = find_by_names('seat', Config.basic_config.ticket_types)
+        for v in seat_objs:
+            for v1 in self.data:
+                for p in v1.__slots__:
+                    if isinstance(getattr(v1, p).value, str) and \
+                        getattr(v1, p).verbose == v.name and getattr(v1, p).value and getattr(v1, p).value != '无':
+                            self.result.append(copy.copy(v1))
+
+    # def filter_train_type(self):
+    #     return
+    #
+    # def filter_train_num(self):
+    #     return
