@@ -87,11 +87,11 @@ class NormalSubmitDcOrder(object):
 
     def _get_passenger_data(self):
         if PassengerData.passenger:
-            self.passenger_data = PassengerData.find_people_by_names(Config.ticket_people_list)
-            return True, "使用缓存的文件内容获取成功"
+            self.passenger_data = PassengerData.find_people_by_names(Config.basic_config.ticket_people_list)
         # get token from html file.
         while not (self.token and self.ticket_passenger_info):
             self._get_submit_token()
+        return True, "使用缓存的文件内容获取成功"
         # 获取乘客信息并保存
         while not self.passenger_data:
             form_data = {
@@ -105,7 +105,7 @@ class NormalSubmitDcOrder(object):
                 # write data to passenger data.
                 PassengerData.raw_data = json_response['data']['normal_passengers']
                 PassengerData.get_final_data()
-                self.passenger_data = PassengerData.find_people_by_names(Config.ticket_people_list)
+                self.passenger_data = PassengerData.find_people_by_names(Config.basic_config.ticket_people_list)
                 return True, "OK"
             else:
                 return False, "获取乘客信息失败"
@@ -135,7 +135,7 @@ class NormalSubmitDcOrder(object):
                 self.ticket_passenger_info['queryLeftTicketRequestDTO']['train_date'], '%Y%m%d').strftime(
                 '%b %a %d %Y 00:00:00 GMT+0800') + ' (中国标准时间)',
             'train_no': self.ticket_passenger_info['queryLeftTicketRequestDTO']['train_no'],
-            'stationTrainCode': self.train.train_no.value,
+            'stationTrainCode': self.train.stationTrainCode.value,
             'seatType': self.seat_type,
             'fromStationTelecode': self.train.from_station_code.value,
             'toStationTelecode': self.train.to_station_code.value,
@@ -222,8 +222,9 @@ class NormalSubmitDcOrder(object):
                 if not status:
                     self.retry_time -= 1
                     break
-            Log.v("提交订单成功")
-            return True
+            else:
+                Log.v("提交订单成功")
+                return True
         Log.v("提交订单失败")
         return False
 

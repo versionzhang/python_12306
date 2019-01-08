@@ -40,12 +40,12 @@ class PassengerTool(object):
             return b
 
     def find_people_by_names(self, names):
-        data = list(filter(lambda x: x.name in names, self.passenger))
+        data = list(filter(lambda x: x.passenger_name in names, self.passenger))
         return data
 
     def get_final_data(self):
         d = self.load_exists_data()
-        if d:
+        if d and d.passenger:
             # 两个小时的有效期
             if d.current + datetime.timedelta(hours=2) > self.current:
                 return d
