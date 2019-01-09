@@ -1,9 +1,7 @@
-import pickle
 import time
 
 import redis
 
-from global_data.const_data import find_by_name
 from global_data.session import LOGIN_SESSION
 from logic.login.login import NormalLogin
 from logic.query.query import Query
@@ -21,17 +19,21 @@ class Schedule(object):
     def run(self):
         s = LocalSimpleCache('', 'logincookie.pickle').get_final_data()
         if not s.raw_data:
-            while True:
+            while self.retry_login_time:
                 l = NormalLogin()
-                status, _ = l.login()
+                status, msg = l.login()
                 if not status:
-                    Log.v("")
-                    return
+                    Log.v("登录失败, 重试中")
+                    self.retry_login_time -= 1
+                    continue
                 else:
                     Log.v("导出已经登录的cookie")
                     s.raw_data = LOGIN_SESSION.cookies
                     s.export_pickle()
                     break
+            if not self.retry_login_time:
+                Log.v("重试次数已经超过设置")
+                return
         else:
             Log.v("加载已经登录的cookie")
             LOGIN_SESSION.cookies.update(s.raw_data)
@@ -53,5 +55,5 @@ class Schedule(object):
                     break
 
 if __name__ == "__main__":
-    s = Schedule()
-    s.run()
+    instance = Schedule()
+    instance.run()
