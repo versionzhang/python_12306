@@ -8,7 +8,7 @@ from hashlib import md5
 
 from comonexception import ResponseCodeError
 from global_data.session import LOGIN_SESSION
-from global_data.url_conf import LOGIN_URLMAPPING
+from global_data.url_conf import LOGIN_URL_MAPPING
 from global_data.useragent import CHROME_USER_AGENT
 
 from config import Config
@@ -63,7 +63,7 @@ class NormalCaptchaUtil(object):
     def getcaptcha():
         while True:
             try:
-                data = get_captcha_image(LOGIN_SESSION, LOGIN_URLMAPPING["normal"]["captcha"])
+                data = get_captcha_image(LOGIN_SESSION, LOGIN_URL_MAPPING["normal"]["captcha"])
                 break
             except ResponseCodeError:
                 continue
@@ -77,7 +77,7 @@ class NormalCaptchaUtil(object):
             'login_site': 'E'
         }
         json_response = send_captcha_requests(LOGIN_SESSION,
-                                              LOGIN_URLMAPPING["normal"]["captchaCheck"],
+                                              LOGIN_URL_MAPPING["normal"]["captchaCheck"],
                                               params=params_data)
         Log.v('normal login captcha verify: %s' % json_response)
         return json_status(json_response, [], ok_code=self.success_code)
@@ -88,7 +88,7 @@ class OtherCaptchaUtil(object):
 
     @staticmethod
     def getcaptcha():
-        data = get_captcha_image(LOGIN_SESSION, LOGIN_URLMAPPING["other"]["captcha"])
+        data = get_captcha_image(LOGIN_SESSION, LOGIN_URL_MAPPING["other"]["captcha"])
         img_binary = base64.b64decode(data["image"]).encode()
         return img_binary
 
@@ -99,7 +99,7 @@ class OtherCaptchaUtil(object):
         }
 
         json_response = send_requests(LOGIN_SESSION,
-                                      LOGIN_URLMAPPING["other"]["captchaCheck"],
+                                      LOGIN_URL_MAPPING["other"]["captchaCheck"],
                                       data=form_data)
         Log.v('other login captcha verify: %s' % json_response)
 

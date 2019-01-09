@@ -23,6 +23,7 @@ NORMAL_PIPELINE = [
     "_check_order_status_queue"
 ]
 
+
 class NormalSubmitDcOrder(object):
     """
     单程票正常订单提交类
@@ -31,8 +32,7 @@ class NormalSubmitDcOrder(object):
     token = ''
     ticket_passenger_info = {}
     passenger_data = []
-    left_tickets= -1
-    persons_count = -1
+    left_tickets = -1
     wait_time = 120
     order_id = ''
     retry_time = 2
@@ -145,7 +145,7 @@ class NormalSubmitDcOrder(object):
                 '%b %a %d %Y 00:00:00 GMT+0800') + ' (中国标准时间)',
             'train_no': self.ticket_passenger_info['queryLeftTicketRequestDTO']['train_no'],
             'stationTrainCode': self.train.stationTrainCode.value,
-            'seatType': self.seat_type,
+            'seatType': self.seat_type.sys_code,
             'fromStationTelecode': self.train.from_station_code.value,
             'toStationTelecode': self.train.to_station_code.value,
             'leftTicket': self.ticket_passenger_info['leftTicketStr'],
@@ -154,12 +154,12 @@ class NormalSubmitDcOrder(object):
             '_json_att': '',
             'REPEAT_SUBMIT_TOKEN': self.token
         }
+        Log.v('send post data to get_queue_count {data}'.format(data=form_data))
         json_response = send_requests(LOGIN_SESSION, self.URLS['getQueueCount'], data=form_data)
         Log.v('get_queue_count 返回json数据 %s' % json_response)
         status, msg = submit_response_checker(json_response, ["status"], True)
         if status:
             self.left_tickets = json_response['data']['ticket']
-            self.persons_count = json_response['data']['count']
         else:
             BlackTrains.add_train(self.train)
         return status, msg
@@ -173,7 +173,7 @@ class NormalSubmitDcOrder(object):
             'key_check_isChange': self.ticket_passenger_info['key_check_isChange'],
             'leftTicketStr': self.ticket_passenger_info['leftTicketStr'],
             'train_location': self.ticket_passenger_info['train_location'],
-            'choose_seats': '', # 暂时未加选座
+            'choose_seats': '',  # 暂时未加选座
             'seatDetailType': '000',
             'whatsSelect': '1',
             'roomType': '00',
@@ -220,7 +220,7 @@ class NormalSubmitDcOrder(object):
             '_json_att': '',
             'REPEAT_SUBMIT_TOKEN': self.token,
         }
-        json_response = send_requests(LOGIN_SESSION, self.URLS['queryOrderWaitTime'], params=params)
+        json_response = send_requests(LOGIN_SESSION, self.URLS['resultOrderForQueue'], params=params)
         Log.v('check_order_status_queue 返回json数据 %s' % json_response)
         status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True)
         return status, msg
@@ -237,7 +237,3 @@ class NormalSubmitDcOrder(object):
                 return True
         Log.v("提交订单失败")
         return False
-
-
-
-

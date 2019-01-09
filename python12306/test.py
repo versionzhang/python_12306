@@ -51,6 +51,7 @@ class Schedule(object):
                 else:
                     break
 
+
 if __name__ == "__main__":
     instance = Schedule()
     instance.run()

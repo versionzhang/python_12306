@@ -180,6 +180,9 @@ SUBMIT_URLS = {
             'method': 'POST',
             'headers': {
                 'Referer': r'https://kyfw.12306.cn/otn/confirmPassenger/initDc',
+                'Content-Type': r'application/x-www-form-urlencoded; charset=UTF-8',
+                'Connection': 'keep-alive',
+                'X-Requested-With': 'XMLHttpRequest'
             },
             'response': 'json'
         },
@@ -188,6 +191,9 @@ SUBMIT_URLS = {
             'method': 'POST',
             'headers': {
                 'Referer': r'https://kyfw.12306.cn/otn/confirmPassenger/initDc',
+                'Content-Type': r'application/x-www-form-urlencoded; charset=UTF-8',
+                'Connection': 'keep-alive',
+                'X-Requested-With': 'XMLHttpRequest'
             },
             'response': 'json'
         },
@@ -197,6 +203,8 @@ SUBMIT_URLS = {
             'headers': {
                 'Referer': r'https://kyfw.12306.cn/otn/confirmPassenger/initDc',
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Connection': 'keep-alive',
+                'X-Requested-With': 'XMLHttpRequest'
             },
         },
         'queryOrderWaitTime': {
@@ -288,7 +296,32 @@ SUBMIT_URLS = {
     }
 }
 
-LOGIN_URLMAPPING = {key: {key1: UrlMapping(v1) for key1, v1 in v.items()} for key, v in LOGIN_URLS.items()}
+FAST_SUBMIT_URLS = {
+    'autoSubmitOrderRequest': {
+        'url': r'https://kyfw.12306.cn/otn/confirmPassenger/autoSubmitOrderRequest',
+        'method': 'POST',
+        'headers': {
+            'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init',
+        },
+    },
+    "getQueueCountAsync": {  # 快速获取订单数据
+        "url": "https://kyfw.12306.cn/otn/confirmPassenger/getQueueCountAsync",
+        'method': 'POST',
+        'headers': {
+                'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init',
+            },
+    },
+    "confirmSingleForQueueAsys": {  # 快速订单排队
+        "url": "https://kyfw.12306.cn/otn/confirmPassenger/confirmSingleForQueueAsys",
+        'method': 'POST',
+        'headers': {
+                'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init',
+            },
+    },
+}
+
+LOGIN_URL_MAPPING = {key: {key1: UrlMapping(v1) for key1, v1 in v.items()} for key, v in LOGIN_URLS.items()}
 QUERY_URL_MAPPING = UrlMapping(QUERY_URL)
 SUBMIT_URL_MAPPING = {key: {key1: UrlMapping(v1) for key1, v1 in v.items()} for key, v in SUBMIT_URLS.items()}
+FAST_SUBMIT_URL_MAPPING = {key: UrlMapping(v) for key, v in FAST_SUBMIT_URLS.items()}
 

@@ -44,14 +44,12 @@ class Query(object):
         for v in data:
             self.pretty_output(v)
 
-
     def filter(self):
         data = self.run_query()
         q = QueryFilter(data)
         return q.filter()
         # for v in q.result:
         #     self.pretty_output(v)
-
 
 
 class QueryFilter(object):
@@ -66,15 +64,15 @@ class QueryFilter(object):
             for v1 in self.data:
                 for p in v1.__slots__:
                     if isinstance(getattr(v1, p).value, str) and \
-                        getattr(v1, p).verbose == v.name and getattr(v1, p).value:
-                            if getattr(v1, p).value == '有' or getattr(v1, p).value.isnumeric():
-                                self.result.append([v, copy.copy(v1)])
+                            getattr(v1, p).verbose == v.name and getattr(v1, p).value:
+                        if getattr(v1, p).value == '有' or getattr(v1, p).value.isnumeric():
+                            self.result.append([v, copy.copy(v1)])
 
     def filter_train_time(self):
         return list(
             filter(
-            lambda x: Config.basic_config.earliest_time < x[1].start_time.value \
-                      and x[1].arrive_time.value < Config.basic_config.latest_time,
+                lambda x: Config.basic_config.earliest_time < x[1].start_time.value \
+                          and x[1].arrive_time.value < Config.basic_config.latest_time,
                 self.result)
         )
 

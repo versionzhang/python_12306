@@ -1,7 +1,7 @@
 from global_data.session import LOGIN_SESSION
 
 from config import Config
-from global_data.url_conf import LOGIN_URLMAPPING
+from global_data.url_conf import LOGIN_URL_MAPPING
 from logic.login.captcha import Captcha
 from utils.log import Log
 from utils.net import send_requests, json_status
@@ -9,7 +9,7 @@ from utils.net import send_requests, json_status
 
 class NormalLogin(object):
     __session = LOGIN_SESSION
-    URLS = LOGIN_URLMAPPING["normal"]
+    URLS = LOGIN_URL_MAPPING["normal"]
 
     def _init(self):
         send_requests(LOGIN_SESSION, self.URLS["init"])
