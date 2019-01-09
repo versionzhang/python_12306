@@ -84,6 +84,7 @@ def get_captcha_image(session, urlmapping_obj, params=None, data=None, **kwargs)
 def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
     session.headers.update(urlmapping_obj.headers)
     try:
+        Log.v("请求 url {url}".format(url=urlmapping_obj.url))
         response = session.request(method=urlmapping_obj.method,
                                    url=urlmapping_obj.url,
                                    params=params,
@@ -91,6 +92,7 @@ def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
                                    timeout=10,
                                    # allow_redirects=False,
                                    **kwargs)
+        Log.v("返回response url {url}".format(url=response.url))
         if response.status_code == requests.codes.ok:
             if 'xhtml+xml' in response.headers['Content-Type']:
                 data = response.text
@@ -116,7 +118,6 @@ def submit_response_checker(response, ok_columns, ok_code):
         response = back_response
         nest = v.split('.')
         for v1 in nest:
-            print(v1)
             r = response.get(v1, None)
             if not r:
                 return False, "字段不存在检查失败"
@@ -137,7 +138,8 @@ def json_status(json_response, check_column, ok_code=0):
     """
     if not isinstance(json_response, (list, dict)):
         return False, '数据非json数据'
-    status = json_response.get('result_code', None) == ok_code
+    code = json_response.get('result_code', None)
+    status = code == ok_code or code == 0 or code == '0'
     if status:
         return status, "OK"
     else:

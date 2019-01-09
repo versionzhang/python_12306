@@ -88,10 +88,14 @@ class NormalSubmitDcOrder(object):
     def _get_passenger_data(self):
         if PassengerData.passenger:
             self.passenger_data = PassengerData.find_people_by_names(Config.basic_config.ticket_people_list)
-        # get token from html file.
-        while not (self.token and self.ticket_passenger_info):
-            self._get_submit_token()
-        return True, "使用缓存的文件内容获取成功"
+            Log.v(self.passenger_data)
+            # get token from html file.
+            while True:
+                if self.token and self.ticket_passenger_info:
+                    break
+                else:
+                    self._get_submit_token()
+            return True, "使用缓存的文件内容获取成功"
         # 获取乘客信息并保存
         while not self.passenger_data:
             form_data = {
@@ -106,6 +110,11 @@ class NormalSubmitDcOrder(object):
                 PassengerData.raw_data = json_response['data']['normal_passengers']
                 PassengerData.get_final_data()
                 self.passenger_data = PassengerData.find_people_by_names(Config.basic_config.ticket_people_list)
+                while True:
+                    if self.token and self.ticket_passenger_info:
+                        break
+                    else:
+                        self._get_submit_token()
                 return True, "OK"
             else:
                 return False, "获取乘客信息失败"
@@ -171,7 +180,7 @@ class NormalSubmitDcOrder(object):
             'REPEAT_SUBMIT_TOKEN': self.token,
         }
         json_response = send_requests(LOGIN_SESSION, self.URLS['confirmForQueue'], data=form_data)
-        Log.v('校验排队信息返回json数据 %s' % json_response)
+        Log.v('confirm_single_or_go_for_queue 返回json数据 %s' % json_response)
         status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True)
         return status, msg
 
@@ -183,8 +192,8 @@ class NormalSubmitDcOrder(object):
             'REPEAT_SUBMIT_TOKEN': self.token
         }
         json_response = send_requests(LOGIN_SESSION, self.URLS['queryOrderWaitTime'], params=params)
-        Log.v('获取排队信息返回json数据 %s' % json_response)
-        status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True)
+        Log.v('query_order_wait_time 返回json数据 %s' % json_response)
+        status, msg = submit_response_checker(json_response, ["status"], True)
         if status:
             self.wait_time = json_response['data']['waitTime']
             self.order_id = json_response['data']['orderId']
@@ -210,7 +219,7 @@ class NormalSubmitDcOrder(object):
             'REPEAT_SUBMIT_TOKEN': self.token,
         }
         json_response = send_requests(LOGIN_SESSION, self.URLS['queryOrderWaitTime'], params=params)
-        Log.v('检查订单获取状态返回json数据 %s' % json_response)
+        Log.v('check_order_status_queue 返回json数据 %s' % json_response)
         status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True)
         return status, msg
 
