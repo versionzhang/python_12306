@@ -6,6 +6,7 @@ from PIL import Image
 import requests
 from hashlib import md5
 
+from comonexception import ResponseCodeError
 from global_data.session import LOGIN_SESSION
 from global_data.url_conf import LOGIN_URLMAPPING
 from global_data.useragent import CHROME_USER_AGENT
@@ -60,7 +61,12 @@ class NormalCaptchaUtil(object):
 
     @staticmethod
     def getcaptcha():
-        data = get_captcha_image(LOGIN_SESSION, LOGIN_URLMAPPING["normal"]["captcha"])
+        while True:
+            try:
+                data = get_captcha_image(LOGIN_SESSION, LOGIN_URLMAPPING["normal"]["captcha"])
+                break
+            except ResponseCodeError:
+                continue
         img_binary = base64.b64decode(data["image"])
         return img_binary
 

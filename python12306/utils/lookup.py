@@ -17,9 +17,10 @@ def build_passenger_ticket_string(seat_type, passengers):
 
 def build_oldpassenger_ticket_string(passengers):
     # oldPassengerStr-->张三(passenger_name),1(证件类型:passenger_id_type_code),320xxxxxx(passenger_id_no),1_
-    f = lambda x: '%s,%s,%s,1_' % (x.passenger_name,
+    f = lambda x: '%s,%s,%s,%s_' % (x.passenger_name,
                                    x.passenger_id_type_code,
-                                   x.passenger_id_no)
+                                   x.passenger_id_no,
+                                   find_by_name("ticket", Config.basic_config.ticket_type).user_code)
     return '_'.join([f(v) for v in passengers])
 
 

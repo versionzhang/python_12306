@@ -78,14 +78,14 @@ class QueryFilter(object):
                 self.result)
         )
 
-
     def filter_train_type(self):
         return list(
             filter(
-                lambda x: x[1].stationTrainCode.value[0] in Config.basic_config.train_types,
+                lambda x: x[1].stationTrainCode.value[0] in Config.basic_config.train_types or \
+                          (x[1].stationTrainCode.value[0].isnumeric() and 'S' in Config.basic_config.train_types),
                 self.result)
         )
-    #
+
     def filter_train_num(self):
         return list(
             filter(

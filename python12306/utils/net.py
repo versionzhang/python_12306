@@ -74,7 +74,7 @@ def get_captcha_image(session, urlmapping_obj, params=None, data=None, **kwargs)
         else:
             Log.w(response.url)
             Log.w(response.status_code)
-            return response.text
+            raise ResponseCodeError
     else:
         Log.w(response.url)
         Log.w(response.status_code)
