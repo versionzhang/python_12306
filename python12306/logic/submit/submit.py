@@ -88,14 +88,13 @@ class NormalSubmitDcOrder(object):
     def _get_passenger_data(self):
         if PassengerData.passenger:
             self.passenger_data = PassengerData.find_people_by_names(Config.basic_config.ticket_people_list)
-            Log.v(self.passenger_data)
             # get token from html file.
             while True:
                 if self.token and self.ticket_passenger_info:
                     break
                 else:
                     self._get_submit_token()
-            return True, "使用缓存的文件内容获取成功"
+            return True, "使用缓存的乘客信息导入成功"
         # 获取乘客信息并保存
         while not self.passenger_data:
             form_data = {
