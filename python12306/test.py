@@ -38,6 +38,8 @@ class Schedule(object):
         while True:
             q = Query()
             data = q.filter()
+            if not data:
+                Log.v("未查到满足条件的车次")
             for v in data:
                 print(v[0])
                 q.pretty_output(v[1])
