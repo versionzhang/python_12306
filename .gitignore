@@ -22,6 +22,9 @@ __pycache__
 # log file
 *.log
 
+# pickle file
+*.pickle
+
 
 # IDE files
 .project

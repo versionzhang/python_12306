@@ -19,7 +19,7 @@ class Schedule(object):
     login_status = False
 
     def run(self):
-        s = LocalSimpleCache('', 'logincookie.pk').get_final_data()
+        s = LocalSimpleCache('', 'logincookie.pickle').get_final_data()
         if not s.raw_data:
             l = NormalLogin()
             status, _ = l.login()
