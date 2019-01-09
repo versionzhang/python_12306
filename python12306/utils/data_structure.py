@@ -78,6 +78,12 @@ TRAIN_MAPPING = [
     },
     # 1 备注 2 预订
     {
+        "index": 2,
+        "name": "sys_train_no",
+        "verbose": "车次代码",
+        "display": False
+    },
+    {
         "index": 3,
         "name": "stationTrainCode",
         "verbose": "车次",

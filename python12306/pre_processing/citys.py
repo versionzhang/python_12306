@@ -53,14 +53,14 @@ class CityTool(object):
     def to_python(self):
         data = self.raw_data()
         self.citydata = [CityStationMapping(
-                            data=zip((
+                            data=dict(zip((
                                 "abbr3",
                                 "name",
                                 "code",
                                 "pinyin",
                                 "abbr2",
                                 "num"
-                            ), v.split('|'))
+                            ), v.split('|')))
         ) for v in data]
         return self
 

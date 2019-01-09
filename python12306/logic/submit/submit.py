@@ -10,7 +10,7 @@ from global_data.session import LOGIN_SESSION
 from global_data.url_conf import SUBMIT_URL_MAPPING
 from pre_processing.passengers import PassengerData
 from utils.log import Log
-from utils.lookup import build_passenger_ticket_string, build_oldpassenger_ticket_string
+from utils.lookup import build_passenger_ticket_string, build_oldpassenger_ticket_string, BlackTrains
 from utils.net import send_requests, submit_response_checker
 
 NORMAL_PIPELINE = [
@@ -160,6 +160,8 @@ class NormalSubmitDcOrder(object):
         if status:
             self.left_tickets = json_response['data']['ticket']
             self.persons_count = json_response['data']['count']
+        else:
+            BlackTrains.add_train(self.train)
         return status, msg
 
     def _confirm_single_or_go_for_queue(self):

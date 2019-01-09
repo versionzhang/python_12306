@@ -44,5 +44,4 @@ def send_email(msg_type, **extra_var):
             smtp.quit()
             Log.v("邮件发送成功")
         except Exception as e:
-            import traceback
             Log.e("发送失败, 邮件配置有误, 请检查配置")

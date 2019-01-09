@@ -48,15 +48,14 @@ class Query(object):
     def filter(self):
         data = self.run_query()
         q = QueryFilter(data)
-        q.filter_by_seat()
-        self.pretty_output(q.result[0])
-        return q.result[0]
+        return q.filter()
         # for v in q.result:
         #     self.pretty_output(v)
 
 
 
 class QueryFilter(object):
+
     def __init__(self, data):
         self.data = data
         self.result = []
@@ -67,11 +66,39 @@ class QueryFilter(object):
             for v1 in self.data:
                 for p in v1.__slots__:
                     if isinstance(getattr(v1, p).value, str) and \
-                        getattr(v1, p).verbose == v.name and getattr(v1, p).value and getattr(v1, p).value != '无':
-                            self.result.append(copy.copy(v1))
+                        getattr(v1, p).verbose == v.name and getattr(v1, p).value:
+                            if getattr(v1, p).value == '有' or getattr(v1, p).value.isnumeric():
+                                self.result.append([v, copy.copy(v1)])
 
-    # def filter_train_type(self):
-    #     return
+    def filter_train_time(self):
+        return list(
+            filter(
+            lambda x: Config.basic_config.earliest_time < x[1].start_time.value \
+                      and x[1].arrive_time.value < Config.basic_config.latest_time,
+                self.result)
+        )
+
+
+    def filter_train_type(self):
+        return list(
+            filter(
+                lambda x: x[1].stationTrainCode.value[0] in Config.basic_config.train_types,
+                self.result)
+        )
     #
-    # def filter_train_num(self):
-    #     return
+    def filter_train_num(self):
+        return list(
+            filter(
+                lambda x: x[1].stationTrainCode.value in Config.basic_config.train_list,
+                self.result)
+        )
+
+    def filter(self):
+        # 先过滤席位
+        self.filter_by_seat()
+        if Config.basic_config.manual_trainnum_enable:
+            self.result = self.filter_train_num()
+        else:
+            self.result = self.filter_train_time()
+            self.result = self.filter_train_type()
+        return self.result

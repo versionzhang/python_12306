@@ -21,24 +21,34 @@ class Schedule(object):
     def run(self):
         s = LocalSimpleCache('', 'logincookie.pickle').get_final_data()
         if not s.raw_data:
-            l = NormalLogin()
-            status, _ = l.login()
-            if not status:
-                return
-            else:
-                Log.v("导出已经登录的cookie")
-                s.raw_data = LOGIN_SESSION.cookies
-                s.export_pickle()
+            while True:
+                l = NormalLogin()
+                status, _ = l.login()
+                if not status:
+                    Log.v("")
+                    return
+                else:
+                    Log.v("导出已经登录的cookie")
+                    s.raw_data = LOGIN_SESSION.cookies
+                    s.export_pickle()
+                    break
         else:
             Log.v("加载已经登录的cookie")
             LOGIN_SESSION.cookies.update(s.raw_data)
-
-        q = Query()
-        data = q.filter()
-        time.sleep(5)
-        seat_code = find_by_name('seat', Config.basic_config.ticket_types[0]).sys_code
-        submit = NormalSubmitDcOrder(data, seat_code)
-        submit.run()
+        while True:
+            q = Query()
+            data = q.filter()
+            for v in data:
+                print(v[0])
+                q.pretty_output(v[1])
+            time.sleep(5)
+            for v in data:
+                submit = NormalSubmitDcOrder(v[1], v[0])
+                f = submit.run()
+                if not f:
+                    continue
+                else:
+                    break
 
 if __name__ == "__main__":
     s = Schedule()

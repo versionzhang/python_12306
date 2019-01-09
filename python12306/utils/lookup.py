@@ -1,3 +1,5 @@
+import datetime
+
 from config import Config
 from global_data.const_data import find_by_name
 
@@ -19,3 +21,27 @@ def build_oldpassenger_ticket_string(passengers):
                                    x.passenger_id_type_code,
                                    x.passenger_id_no)
     return '_'.join([f(v) for v in passengers])
+
+
+class BlackTrainList(object):
+    def __init__(self):
+        self.trains = []
+
+    def add_train(self, train):
+        now = datetime.datetime.now()
+        self.trains.append([now, train])
+
+    def check(self, train_no):
+        now = datetime.datetime.now()
+        # 过滤掉已经过期的数据
+        self.trains = list(filter(lambda x: datetime.timedelta(minutes=Config.basic_config.black_train_time) + v[0] > now,
+                                  self.trains))
+        for v in self.trains:
+            if v[1].sys_train_no.value == train_no:
+                return True
+        return False
+
+
+BlackTrains = BlackTrainList()
+
+
