@@ -58,7 +58,7 @@ class FastSubmitDcOrder(NormalSubmitDcOrder):
                 '%b %a %d %Y 00:00:00 GMT+0800') + ' (中国标准时间)',
             'train_no': self.ticket_passenger_info['queryLeftTicketRequestDTO']['train_no'],
             'stationTrainCode': self.train.stationTrainCode.value,
-            'seatType': self.seat_type,
+            'seatType': self.seat_type.sys_code,
             'fromStationTelecode': self.train.from_station_code.value,
             'toStationTelecode': self.train.to_station_code.value,
             'leftTicket': self.ticket_passenger_info['leftTicketStr'],
