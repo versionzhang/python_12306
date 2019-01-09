@@ -1,7 +1,5 @@
 import time
 
-import redis
-
 from global_data.session import LOGIN_SESSION
 from logic.login.login import NormalLogin
 from logic.query.query import Query
@@ -10,7 +8,6 @@ from logic.submit.submit import NormalSubmitDcOrder
 from utils.log import Log
 from utils.data_loader import LocalSimpleCache
 
-server = redis.Redis()
 
 class Schedule(object):
     retry_login_time = Config.basic_config.retry_login_time
