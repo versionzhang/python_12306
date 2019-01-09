@@ -151,6 +151,8 @@ QUERY_URL = {
         'method': 'GET',
         'headers': {
             'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init',
+            'Connection': 'keep-alive',
+            'X-Requested-With': 'XMLHttpRequest'
         }
 }
 
@@ -317,6 +319,29 @@ FAST_SUBMIT_URLS = {
         'headers': {
                 'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init',
             },
+    },
+    'getExtraInfo': {
+        'url': r'https://kyfw.12306.cn/otn/confirmPassenger/initDc',
+        'method': 'GET',
+        'response': 'html',
+    },
+    'getPassengerDTOs': {
+        'url': r'https://kyfw.12306.cn/otn/confirmPassenger/getPassengerDTOs',
+        'method': 'POST',
+    },
+    'queryOrderWaitTime': {
+        'url': r'https://kyfw.12306.cn/otn/confirmPassenger/queryOrderWaitTime',
+        'method': 'GET',
+        'headers': {
+            'Referer': r'https://kyfw.12306.cn/otn/confirmPassenger/initWc',
+        },
+    },
+    'resultOrderForQueue': {
+        'url': r'https://kyfw.12306.cn/otn/confirmPassenger/resultOrderForWcQueue',
+        'method': 'POST',
+        'headers': {
+            'Referer': r'https://kyfw.12306.cn/otn/confirmPassenger/initWc',
+        },
     },
 }
 

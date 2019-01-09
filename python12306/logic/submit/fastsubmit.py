@@ -15,16 +15,16 @@ from utils.net import send_requests, submit_response_checker
 FAST_PIPELINE = [
     "_get_passenger_data",
     "_auto_submit_order_request",
-    "_get_queue_count_async",
-    "_confirm_single_for_queue_asys",
-    "_wait_for_order_id",
-    "_check_order_status_queue"
+    # "_get_queue_count_async",
+    # "_confirm_single_for_queue_asys",
+    # "_wait_for_order_id",
+    # "_check_order_status_queue"
 ]
 
 
 class FastSubmitDcOrder(NormalSubmitDcOrder):
     """
-    单程票正常订单提交类
+    单程票快速订单提交类
     """
     URLS = FAST_SUBMIT_URL_MAPPING
     token = ''
@@ -35,7 +35,30 @@ class FastSubmitDcOrder(NormalSubmitDcOrder):
     order_id = ''
     retry_time = 2
 
+    def _get_passenger_data(self):
+        if PassengerData.passenger:
+            self.passenger_data = PassengerData.find_people_by_names(Config.basic_config.ticket_people_list)
+            return True, "使用缓存的乘客信息导入成功"
+        # 获取乘客信息并保存
+        while not self.passenger_data:
+            json_response = send_requests(LOGIN_SESSION, self.URLS['getPassengerDTOs'])
+            Log.v('获取乘客信息 %s' % json_response)
+            status, msg = submit_response_checker(json_response, ["status"], True)
+            if status:
+                # write data to passenger data.
+                PassengerData.raw_data = json_response['data']['normal_passengers']
+                PassengerData.get_final_data()
+                self.passenger_data = PassengerData.find_people_by_names(Config.basic_config.ticket_people_list)
+                return True, "OK"
+            else:
+                return False, "获取乘客信息失败"
+
     def _auto_submit_order_request(self):
+        """
+        # response example. for debug.
+            {'validateMessagesShowId': '_validatorMessage', 'status': True, 'httpstatus': 200, 'data': {'result': 'QX#F7F13745AA1C7631B9C6B204C3677E3E1B654BE1111F558326BFED9D#hcc983%2Bc27menDVKU5ja2C2Q1%2FbToZXgLI1l8950QBZxtWwE#1', 'ifShowPassCode': 'N', 'canChooseBeds': 'N', 'canChooseSeats': 'Y', 'choose_Seats': 'M9', 'isCanChooseMid': 'N', 'ifShowPassCodeTime': '2985', 'submitStatus': True, 'smokeStr': ''}, 'messages': [], 'validateMessages': {}}
+        :return:
+        """
         data = OrderedDict()
         data["secretStr"] = self.decode_secret_str(self.train.secretStr.value)
         data["train_date"] = self.format_date(self.train.train_date.value)
@@ -62,7 +85,7 @@ class FastSubmitDcOrder(NormalSubmitDcOrder):
             'fromStationTelecode': self.train.from_station_code.value,
             'toStationTelecode': self.train.to_station_code.value,
             'leftTicket': self.ticket_passenger_info['leftTicketStr'],
-            'purpose_codes': self.ticket_passenger_info['purpose_codes'],
+            'purpose_codes': find_by_name("ticket", Config.basic_config.ticket_type).sys_code,
             '_json_att': ''
         }
         json_response = send_requests(LOGIN_SESSION, self.URLS['getQueueCountAsync'], data=form_data)

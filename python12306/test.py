@@ -4,6 +4,7 @@ from global_data.session import LOGIN_SESSION
 from logic.login.login import NormalLogin
 from logic.query.query import Query
 from config import Config
+from logic.submit.fastsubmit import FastSubmitDcOrder
 from logic.submit.submit import NormalSubmitDcOrder
 from utils.log import Log
 from utils.data_loader import LocalSimpleCache
@@ -44,7 +45,7 @@ class Schedule(object):
                 q.pretty_output(v[1])
             time.sleep(5)
             for v in data:
-                submit = NormalSubmitDcOrder(v[1], v[0])
+                submit = FastSubmitDcOrder(v[1], v[0])
                 f = submit.run()
                 if not f:
                     continue

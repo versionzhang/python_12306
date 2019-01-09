@@ -8,8 +8,8 @@ class BasicMapping(object):
 
     __repr__ = __str__
 
-class CityStationMapping(BasicMapping):
 
+class CityStationMapping(BasicMapping):
     __slots__ = (
         "abbr3",
         "name",
@@ -68,6 +68,7 @@ class UrlMapping(object):
             "{attr}:{val}".format(attr=v, val=getattr(self, v)) for v in self.__slots__])
 
     __repr__ = __str__
+
 
 TRAIN_MAPPING = [
     {
@@ -190,9 +191,9 @@ TRAIN_MAPPING = [
 ]
 
 APPEND_MAPPING = [{"name": v["name"].replace("_code", ""),
-                    "verbose": v["verbose"].replace("代码", ""),
+                   "verbose": v["verbose"].replace("代码", ""),
                    "index": v["index"]} for v in TRAIN_MAPPING if
-                    v["name"].endswith("_code")]
+                  v["name"].endswith("_code")]
 APPEND_PROPERTYS = [v["name"] for v in APPEND_MAPPING]
 TRAINDETAIL_PROPERTYS = [v["name"] for v in TRAIN_MAPPING] + APPEND_PROPERTYS
 
@@ -213,10 +214,11 @@ class TrainProperty(object):
 
 class TrainDetail(object):
     __slots__ = tuple(TRAINDETAIL_PROPERTYS)
+
     def __init__(self, data):
         for v in TRAIN_MAPPING:
             setattr(self, v["name"],
-                    TrainProperty(data={"name":v["name"],
+                    TrainProperty(data={"name": v["name"],
                                         "verbose": v["verbose"],
                                         "display": v.get("display", True),
                                         "value": data[v["index"]]}))
@@ -237,4 +239,4 @@ class PassengerDetail(BasicMapping):
                  "passenger_type_name", "mobile_no", "phone_no",
                  "email", "address", "postalcode", "first_letter",
                  "recordCount", "total_times", "index_id"
-                )
+                 )
