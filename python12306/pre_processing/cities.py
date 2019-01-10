@@ -11,6 +11,7 @@ STATION_URL = "https://kyfw.12306.cn/otn/resources/js/framework/station_name.js"
 
 city_re = re.compile("var station_names =\'(.*)\';")
 
+
 class CityTool(object):
 
     def __init__(self):
@@ -53,14 +54,14 @@ class CityTool(object):
     def to_python(self):
         data = self.raw_data()
         self.citydata = [CityStationMapping(
-                            data=dict(zip((
-                                "abbr3",
-                                "name",
-                                "code",
-                                "pinyin",
-                                "abbr2",
-                                "num"
-                            ), v.split('|')))
+            data=dict(zip((
+                "abbr3",
+                "name",
+                "code",
+                "pinyin",
+                "abbr2",
+                "num"
+            ), v.split('|')))
         ) for v in data]
         return self
 

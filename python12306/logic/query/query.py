@@ -5,7 +5,7 @@ from prettytable import PrettyTable
 from config import Config
 from global_data.const_data import find_by_name, find_by_names
 from global_data.url_conf import QUERY_URL_MAPPING
-from pre_processing.citys import CityData
+from pre_processing.cities import CityData
 from utils.log import Log
 
 from global_data.session import LOGIN_SESSION
@@ -95,7 +95,7 @@ class QueryFilter(object):
         self.filter_by_seat()
         if self.result:
             Log.v("查找到符合配置的车次信息: {0}".format(','.join(
-                [v[0].stationTrainCode.value for v in self.result])))
+                [v[1].stationTrainCode.value for v in self.result])))
         if Config.basic_config.manual_trainnum_enable:
             self.result = self.filter_train_num()
         else:
