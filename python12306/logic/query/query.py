@@ -24,7 +24,6 @@ class Query(object):
             r'leftTicketDTO.to_station': CityData.find_city_by_name(Config.basic_config.to_station).code,
             r'purpose_codes': find_by_name("ticket", Config.basic_config.ticket_type).sys_code
         }
-        Log.v(params)
         json_response = send_requests(LOGIN_SESSION, QUERY_URL_MAPPING, params=params)
         if not isinstance(json_response, (list, dict)):
             return []
@@ -94,6 +93,9 @@ class QueryFilter(object):
     def filter(self):
         # 先过滤席位
         self.filter_by_seat()
+        if self.result:
+            Log.v("查找到符合配置的车次信息: {0}".format(','.join(
+                [v[0].stationTrainCode.value for v in self.result])))
         if Config.basic_config.manual_trainnum_enable:
             self.result = self.filter_train_num()
         else:

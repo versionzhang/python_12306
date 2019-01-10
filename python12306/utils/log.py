@@ -3,6 +3,7 @@ import logging.handlers
 
 from colorama import Fore
 
+from config import Config
 
 logger = logging.getLogger()
 ticket_logger = logging.getLogger('ticket')
@@ -31,12 +32,14 @@ class LogUtils(object):
         maping = dict(info=Fore.GREEN, debug=Fore.BLUE, warning=Fore.YELLOW, error=Fore.RED)
         l = getattr(ticket_logger, msg_type)
         if type(msg) == str:
-            print(maping[msg_type] + msg + Fore.RESET)
+            if (not Config.basic_config.debug) and msg_type != 'debug':
+                print(maping[msg_type] + msg + Fore.RESET)
             l(msg)
         else:
-            print(maping[msg_type])
-            print(msg)
-            print(Fore.RESET)
+            if (not Config.basic_config.debug) and msg_type != 'debug':
+                print(maping[msg_type])
+                print(msg)
+                print(Fore.RESET)
             l(msg)
 
     def d(self, msg):

@@ -17,11 +17,14 @@ class Schedule(object):
     def run(self):
         s = LocalSimpleCache('', 'logincookie.pickle').get_final_data()
         if not s.raw_data:
+            count = 0
             while self.retry_login_time:
                 l = NormalLogin()
+                Log.v("正在为您登录")
                 status, msg = l.login()
                 if not status:
-                    Log.v("登录失败, 重试中")
+                    count += 1
+                    Log.v("登录失败, 重试{0}次".format(count))
                     self.retry_login_time -= 1
                     continue
                 else:
@@ -35,17 +38,21 @@ class Schedule(object):
         else:
             Log.v("加载已经登录的cookie")
             LOGIN_SESSION.cookies.update(s.raw_data)
+        Log.v("正在查询车次余票信息")
+        count = 0
         while True:
+            count += 1
             q = Query()
             data = q.filter()
             if not data:
-                Log.v("未查到满足条件的车次")
+                Log.v("满足条件的车次暂无余票,正在重新查询")
             for v in data:
                 print(v[0])
                 q.pretty_output(v[1])
             time.sleep(5)
+            Log.v("查询{0}次".format(count))
             for v in data:
-                submit = NormalSubmitDcOrder(v[1], v[0])
+                submit = FastSubmitDcOrder(v[1], v[0])
                 f = submit.run()
                 if not f:
                     continue

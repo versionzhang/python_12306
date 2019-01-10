@@ -79,7 +79,7 @@ class NormalCaptchaUtil(object):
         json_response = send_captcha_requests(LOGIN_SESSION,
                                               LOGIN_URL_MAPPING["normal"]["captchaCheck"],
                                               params=params_data)
-        Log.v('normal login captcha verify: %s' % json_response)
+        Log.d('验证码校验结果: %s' % json_response)
         return json_status(json_response, [], ok_code=self.success_code)
 
 

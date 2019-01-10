@@ -23,7 +23,7 @@ def send_captcha_requests(session, urlmapping_obj, params=None, data=None, **kwa
                                timeout=10,
                                # allow_redirects=False,
                                **kwargs)
-    Log.v(urlmapping_obj.url)
+    Log.d(urlmapping_obj.url)
     if response.status_code == requests.codes.ok:
         if 'xhtml+xml' in response.headers['Content-Type']:
             data = response.text
@@ -104,7 +104,7 @@ def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
         if data:
             Log.d("{url} Post 参数 {data}".format(url=urlmapping_obj.url,
                                                data=data))
-        Log.v("返回response url {url}".format(url=response.url))
+        Log.d("返回response url {url}".format(url=response.url))
         if response.status_code == requests.codes.ok:
             if 'xhtml+xml' in response.headers['Content-Type']:
                 data = response.text

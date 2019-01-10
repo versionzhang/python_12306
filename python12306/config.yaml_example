@@ -1,5 +1,8 @@
 ---
 basic_config:
+  # 调试模式, True or False, True为调试模式,终端会输出调试信息,False为正常模式,只显示必要信息
+  debug: False
+
   # 出发日期(list)，格式ex：
     # 2018-01-06
   travel_dates:
