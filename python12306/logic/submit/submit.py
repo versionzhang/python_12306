@@ -204,6 +204,7 @@ class NormalSubmitDcOrder(object):
                 return True, "OK"
             if loop_time > t + delta:
                 return False, "提交超时"
+        return False, "排队失败"
 
     def _check_order_status_queue(self):
         params = {
