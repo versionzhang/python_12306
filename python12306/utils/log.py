@@ -33,11 +33,11 @@ class LogUtils(object):
         maping = dict(info=Fore.GREEN, debug=Fore.BLUE, warning=Fore.YELLOW, error=Fore.RED)
         l = getattr(ticket_logger, msg_type)
         if type(msg) == str:
-            if not Config.basic_config.debug:
+            if Config.basic_config.debug:
                 print(maping[msg_type] + msg + Fore.RESET)
             l(msg)
         else:
-            if not Config.basic_config.debug:
+            if Config.basic_config.debug:
                 print(maping[msg_type])
                 print(msg)
                 print(Fore.RESET)
