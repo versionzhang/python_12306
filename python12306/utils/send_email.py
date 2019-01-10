@@ -6,7 +6,21 @@ from config import Config
 from utils.log import Log
 
 EMAIL_MESSAGES = {
-    1: {"subject": "测试", "content": "this is a test email"}
+    1:
+        {
+            "subject": "测试", "content": "this is a test email"
+        },
+    2:
+        {
+            "subject": "抢票成功通知 - python12306小助手",
+            "content":
+                """
+你的火车票已经订票成功，订单号为{order_no}, 请登录你的12306账号进行查看并付款.
+    
+---by python12306 小助手
+---github仓库链接 https://github.com/versionzhang/python_12306
+"""
+        }
 }
 
 
@@ -32,7 +46,7 @@ def send_email(msg_type, **extra_var):
             port = email_conf.port
             s = data["content"].format(**extra_var)
 
-            msg = MIMEText(s, 'plain', 'utf-8')  # 中文需参数‘utf-8’，单字节字符不需要
+            msg = MIMEText(s, 'plain', 'utf-8')
             msg['Subject'] = Header(subject, 'utf-8')
             msg['From'] = sender
             msg['To'] = ','.join(receiver)

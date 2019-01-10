@@ -74,9 +74,8 @@ class FastSubmitDcOrder(NormalSubmitDcOrder):
         status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True)
         if status:
             self.ticket_passenger_info = dict(zip(["train_location", "key_check_isChange", "leftTicketStr"],
-                                              [unquote(v) for v in json_response["data"]["result"].split("#")]))
+                                                  [unquote(v) for v in json_response["data"]["result"].split("#")]))
         return status, msg
-
 
     def _get_queue_count_async(self):
         form_data = {

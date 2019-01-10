@@ -6,6 +6,7 @@ from logic.query.query import Query
 from config import Config
 from logic.submit.fastsubmit import FastSubmitDcOrder
 from logic.submit.submit import NormalSubmitDcOrder
+from utils.send_email import send_email
 from utils.log import Log
 from utils.data_loader import LocalSimpleCache
 
@@ -13,6 +14,7 @@ from utils.data_loader import LocalSimpleCache
 class Schedule(object):
     retry_login_time = Config.basic_config.retry_login_time
     login_status = False
+    order_id = ''
 
     def run(self):
         s = LocalSimpleCache('', 'logincookie.pickle').get_final_data()
@@ -62,7 +64,14 @@ class Schedule(object):
                 if not f:
                     continue
                 else:
+                    self.order_id = submit.order_id
                     break
+            if self.order_id:
+                break
+
+        Log.v("抢票成功，如果有配置邮箱，稍后会收到邮件通知")
+        # 抢票成功发邮件信息
+        send_email(2, **{"order_no": self.order_id})
 
 
 if __name__ == "__main__":
