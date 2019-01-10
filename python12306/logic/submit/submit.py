@@ -59,12 +59,11 @@ class NormalSubmitDcOrder(object):
             'back_train_date': time.strftime("%Y-%m-%d", time.localtime()),  # query date:2017-12-31
             'tour_flag': 'dc',
             'purpose_codes': find_by_name("ticket", Config.basic_config.ticket_type).sys_code,
-            'query_from_station_name': self.train.from_station_code.value,
-            'query_to_station_name': self.train.to_station_code.value,
+            'query_from_station_name': self.train.from_station.value.name,
+            'query_to_station_name': self.train.to_station.value.name,
             'undefined': '',
         }
         json_response = send_requests(LOGIN_SESSION, self.URLS['submitOrderRequest'], data=form_data)
-        Log.v('submitOrderRequest %s' % json_response)
         return submit_response_checker(json_response, ["status"], True)
 
     def _get_submit_token(self):
@@ -102,7 +101,6 @@ class NormalSubmitDcOrder(object):
                 'REPEAT_SUBMIT_TOKEN': self.token
             }
             json_response = send_requests(LOGIN_SESSION, self.URLS['getPassengerDTOs'], data=form_data)
-            Log.v('获取乘客信息 %s' % json_response)
             status, msg = submit_response_checker(json_response, ["status"], True)
             if status:
                 # write data to passenger data.
@@ -131,9 +129,7 @@ class NormalSubmitDcOrder(object):
             '_json_att': '',
             'REPEAT_SUBMIT_TOKEN': self.token,
         }
-        Log.v('send form data to check_order_info url %s' % form_data)
         json_response = send_requests(LOGIN_SESSION, self.URLS['checkOrderInfo'], data=form_data)
-        Log.v('校验订单信息返回json数据 %s' % json_response)
         status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True)
         return status, msg
 
@@ -153,9 +149,7 @@ class NormalSubmitDcOrder(object):
             '_json_att': '',
             'REPEAT_SUBMIT_TOKEN': self.token
         }
-        Log.v('send post data to get_queue_count {data}'.format(data=form_data))
         json_response = send_requests(LOGIN_SESSION, self.URLS['getQueueCount'], data=form_data)
-        Log.v('get_queue_count 返回json数据 %s' % json_response)
         status, msg = submit_response_checker(json_response, ["status"], True)
         if status:
             self.left_tickets = json_response['data']['ticket']
@@ -181,7 +175,6 @@ class NormalSubmitDcOrder(object):
             'REPEAT_SUBMIT_TOKEN': self.token,
         }
         json_response = send_requests(LOGIN_SESSION, self.URLS['confirmForQueue'], data=form_data)
-        Log.v('confirm_single_or_go_for_queue 返回json数据 %s' % json_response)
         status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True)
         return status, msg
 
@@ -193,7 +186,6 @@ class NormalSubmitDcOrder(object):
             'REPEAT_SUBMIT_TOKEN': self.token
         }
         json_response = send_requests(LOGIN_SESSION, self.URLS['queryOrderWaitTime'], params=params)
-        Log.v('query_order_wait_time 返回json数据 %s' % json_response)
         status, msg = submit_response_checker(json_response, ["status"], True)
         if status:
             self.wait_time = json_response['data']['waitTime']
@@ -220,7 +212,6 @@ class NormalSubmitDcOrder(object):
             'REPEAT_SUBMIT_TOKEN': self.token,
         }
         json_response = send_requests(LOGIN_SESSION, self.URLS['resultOrderForQueue'], params=params)
-        Log.v('check_order_status_queue 返回json数据 %s' % json_response)
         status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True)
         return status, msg
 

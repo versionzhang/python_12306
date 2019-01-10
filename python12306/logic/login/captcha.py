@@ -52,7 +52,7 @@ class RClient(object):
         #
         Log.v("使用若快进行验证码识别")
         data = r.json()
-        Log.v(data)
+        Log.d(data)
         return data
 
 

@@ -19,7 +19,6 @@ LOGIN_URLS = {
             'url': r'https://kyfw.12306.cn/passport/web/auth/uamtk',
             'method': 'POST',
             'headers': {
-                r'Content-Type': r'application/x-www-form-urlencoded; charset=UTF-8',
                 'Referer': r'https://kyfw.12306.cn/otn/passport?redirect=/otn/login/userLogin',
             },
             'response': 'html'
@@ -38,7 +37,6 @@ LOGIN_URLS = {
             # 2019.01.06 use get method.
             'method': 'GET',
             'headers': {
-                'Content-Type': r'application/x-www-form-urlencoded; charset=UTF-8',
                 'Referer': r'https://kyfw.12306.cn/otn/login/init',
             },
             'response': 'json'
@@ -47,7 +45,6 @@ LOGIN_URLS = {
             'url': r'https://kyfw.12306.cn/passport/web/login',
             'method': 'POST',
             'headers': {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
                 'X-Requested-With': 'xmlHttpRequest',
                 'Referer': 'https://kyfw.12306.cn/otn/login/init',
             }
@@ -56,7 +53,6 @@ LOGIN_URLS = {
             'url': r'https://kyfw.12306.cn/otn/login/userLogin',
             'method': 'POST',
             'headers': {
-                'Content-Type': 'application/x-www-form-urlencoded',
                 'Referer': 'https://kyfw.12306.cn/otn/login/init',
             },
             'response': 'html',
@@ -96,7 +92,6 @@ LOGIN_URLS = {
             'method': 'GET',
             'headers': {
                 'Accept': r'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                r'Content-Type': r'application/x-www-form-urlencoded',
                 'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init',
             },
             'response': 'html',
@@ -105,7 +100,6 @@ LOGIN_URLS = {
             'url': r'https://kyfw.12306.cn/passport/web/auth/uamtk',
             'method': 'POST',
             'headers': {
-                r'Content-Type': r'application/x-www-form-urlencoded; charset=UTF-8',
                 'Referer': r'https://kyfw.12306.cn/otn/passport?redirect=/otn/login/userLogin',
             }
         },
@@ -120,15 +114,13 @@ LOGIN_URLS = {
             'method': 'POST',
             'headers': {
                 'Origin': r'https://kyfw.12306.cn',
-                'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init',
-                'Content-Type': r'application/x-www-form-urlencoded; charset=UTF-8',
+                'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init'
             }
         },
         'login': {
             'url': r'https://kyfw.12306.cn/otn/login/loginAysnSuggest',
             'method': 'POST',
             'headers': {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
                 'Origin': r'https://kyfw.12306.cn',
                 'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init',
             }
@@ -137,7 +129,6 @@ LOGIN_URLS = {
             'url': r'https://kyfw.12306.cn/otn/login/loginOut',
             'method': 'GET',
             'headers': {
-                r'Content-Type': r'application/x-www-form-urlencoded',
                 'Host': r'kyfw.12306.cn',
                 'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init',
             },
@@ -150,9 +141,7 @@ QUERY_URL = {
         'url': r'https://kyfw.12306.cn/otn/leftTicket/queryZ',
         'method': 'GET',
         'headers': {
-            'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init',
-            'Connection': 'keep-alive',
-            'X-Requested-With': 'XMLHttpRequest'
+            'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init'
         }
 }
 
@@ -163,7 +152,6 @@ SUBMIT_URLS = {
             'method': 'POST',
             'headers': {
                 'Referer': 'https://kyfw.12306.cn/otn/leftTicket/init',
-                'Content-Type': r'application/x-www-form-urlencoded; charset=UTF-8',
                 'Host': r'kyfw.12306.cn',
             },
         },
@@ -181,10 +169,7 @@ SUBMIT_URLS = {
             'url': r'https://kyfw.12306.cn/otn/confirmPassenger/checkOrderInfo',
             'method': 'POST',
             'headers': {
-                'Referer': r'https://kyfw.12306.cn/otn/confirmPassenger/initDc',
-                'Content-Type': r'application/x-www-form-urlencoded; charset=UTF-8',
-                'Connection': 'keep-alive',
-                'X-Requested-With': 'XMLHttpRequest'
+                'Referer': r'https://kyfw.12306.cn/otn/confirmPassenger/initDc'
             },
             'response': 'json'
         },
@@ -192,10 +177,7 @@ SUBMIT_URLS = {
             'url': r'https://kyfw.12306.cn/otn/confirmPassenger/getQueueCount',
             'method': 'POST',
             'headers': {
-                'Referer': r'https://kyfw.12306.cn/otn/confirmPassenger/initDc',
-                'Content-Type': r'application/x-www-form-urlencoded; charset=UTF-8',
-                'Connection': 'keep-alive',
-                'X-Requested-With': 'XMLHttpRequest'
+                'Referer': r'https://kyfw.12306.cn/otn/confirmPassenger/initDc'
             },
             'response': 'json'
         },
@@ -203,10 +185,7 @@ SUBMIT_URLS = {
             'url': r'https://kyfw.12306.cn/otn/confirmPassenger/confirmSingleForQueue',
             'method': 'POST',
             'headers': {
-                'Referer': r'https://kyfw.12306.cn/otn/confirmPassenger/initDc',
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                'Connection': 'keep-alive',
-                'X-Requested-With': 'XMLHttpRequest'
+                'Referer': r'https://kyfw.12306.cn/otn/confirmPassenger/initDc'
             },
         },
         'queryOrderWaitTime': {
@@ -237,9 +216,7 @@ SUBMIT_URLS = {
             'url': r'https://kyfw.12306.cn/otn/leftTicket/submitOrderRequest',
             'method': 'POST',
             'headers': {
-                'Referer': 'https://kyfw.12306.cn/otn/leftTicket/init',
-                'Content-Type': r'application/x-www-form-urlencoded; charset=UTF-8',
-                'Host': r'kyfw.12306.cn',
+                'Referer': 'https://kyfw.12306.cn/otn/leftTicket/init'
             },
         },
         'getPassengerDTOs': {
@@ -269,8 +246,7 @@ SUBMIT_URLS = {
             'url': r'https://kyfw.12306.cn/otn/confirmPassenger/confirmGoForQueue',
             'method': 'POST',
             'headers': {
-                'Referer': r'https://kyfw.12306.cn/otn/confirmPassenger/initWc',
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Referer': r'https://kyfw.12306.cn/otn/confirmPassenger/initWc'
             },
         },
         'queryOrderWaitTime': {

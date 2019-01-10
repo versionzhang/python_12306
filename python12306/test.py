@@ -45,7 +45,7 @@ class Schedule(object):
                 q.pretty_output(v[1])
             time.sleep(5)
             for v in data:
-                submit = FastSubmitDcOrder(v[1], v[0])
+                submit = NormalSubmitDcOrder(v[1], v[0])
                 f = submit.run()
                 if not f:
                     continue

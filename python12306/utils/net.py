@@ -83,8 +83,14 @@ def get_captcha_image(session, urlmapping_obj, params=None, data=None, **kwargs)
 
 def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
     session.headers.update(urlmapping_obj.headers)
+    if urlmapping_obj.method.lower() == 'post':
+        session.headers.update(
+            {"Content-Type": r'application/x-www-form-urlencoded; charset=UTF-8'}
+        )
+    else:
+        session.headers.pop("Content-Type", None)
     try:
-        Log.v("请求 url {url}".format(url=urlmapping_obj.url))
+        Log.d("请求 url {url}".format(url=urlmapping_obj.url))
         response = session.request(method=urlmapping_obj.method,
                                    url=urlmapping_obj.url,
                                    params=params,
@@ -92,19 +98,30 @@ def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
                                    timeout=10,
                                    # allow_redirects=False,
                                    **kwargs)
+        if params:
+            Log.d("{url} Get 参数 {data}".format(url=urlmapping_obj.url,
+                                               data=params))
+        if data:
+            Log.d("{url} Post 参数 {data}".format(url=urlmapping_obj.url,
+                                               data=data))
         Log.v("返回response url {url}".format(url=response.url))
         if response.status_code == requests.codes.ok:
             if 'xhtml+xml' in response.headers['Content-Type']:
                 data = response.text
                 root = ET.fromstring(data)
-                return {v.tag: v.text for v in root.getchildren()}
+                result = {v.tag: v.text for v in root.getchildren()}
+                return result
             if 'json' in response.headers['Content-Type']:
-                return response.json()
+                result = response.json()
+                Log.d("{url} 返回值 {result}".format(url=urlmapping_obj.url,
+                                                    result=result))
+                return result
             # other type
             return response.text
         else:
             Log.w(response.url)
             Log.w(response.status_code)
+            Log.w("返回状态码有问题")
     except Exception as e:
         Log.e(e)
     return None
