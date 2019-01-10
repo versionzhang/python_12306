@@ -1,5 +1,9 @@
 ---
 basic_config:
+  # 快速下单接口, True or False, 目前12306的web端使用的是正常下单接口,快速下单是从
+  # testerSunshine 12306的流程中拿到的,测试过程中发现有时候会出票失败, 暂时正常下单流程是稳定的
+  fast_submit: False
+
   # 调试模式, True or False, True为调试模式,终端会输出调试信息,False为正常模式,只显示必要信息
   debug: False
 

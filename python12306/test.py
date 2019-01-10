@@ -28,7 +28,9 @@ class Schedule(object):
                     self.retry_login_time -= 1
                     continue
                 else:
-                    Log.v("导出已经登录的cookie")
+                    Log.v("登录成功")
+                    Log.v("导出已经登录的cookie,已便下次使用")
+                    Log.v("cookie的有效期为 {0}小时".format(s.expire_time))
                     s.raw_data = LOGIN_SESSION.cookies
                     s.export_pickle()
                     break
@@ -52,7 +54,10 @@ class Schedule(object):
             time.sleep(5)
             Log.v("查询{0}次".format(count))
             for v in data:
-                submit = FastSubmitDcOrder(v[1], v[0])
+                if Config.basic_config.fast_submit:
+                    submit = FastSubmitDcOrder(v[1], v[0])
+                else:
+                    submit = NormalSubmitDcOrder(v[1], v[0])
                 f = submit.run()
                 if not f:
                     continue
