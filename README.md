@@ -21,8 +21,8 @@ Usage
 Notice
 ---------------------------------
 如果中途更换12306账号需要将已经生成的pickle文件删除
-`utils/logincookie.pickle`以及`pre_processing/passengers.pickle`删除, `citydata.pickle`文件不用删除
-主要是dump了登录之后的cookie信息以及账号的乘客信息.更换之后需要删除进行重新生成
+`utils/logincookie.pickle`以及`pre_processing/passengers.pickle`, `citydata.pickle`
+由于改过一次city的文件名，所以citydata.pickle文件会失效，删除之后会重新生成。其他的两个主要是dump了登录之后的cookie信息以及账号的乘客信息.更换之后需要删除进行重新生成
 
 Repo Status
 ---------------------------------
