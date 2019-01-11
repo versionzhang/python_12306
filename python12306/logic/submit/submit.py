@@ -36,6 +36,8 @@ class NormalSubmitDcOrder(object):
     wait_time = 120
     order_id = ''
     retry_time = 2
+    break_submit = False
+    break_msg = ''
 
     def __init__(self, train_detail, seat_type):
         self.train = train_detail
@@ -223,6 +225,8 @@ class NormalSubmitDcOrder(object):
             status, msg = self._query_order_wait_time()
             Log.v(msg)
             if "没有足够的票" in msg:
+                self.break_submit = True
+                self.break_msg = "没有足够的票"
                 # TODO: 添加车次到小黑屋
                 return False, "没有足够的票"
             time.sleep(5)
@@ -247,6 +251,10 @@ class NormalSubmitDcOrder(object):
         while self.retry_time:
             for v in NORMAL_PIPELINE:
                 status, msg = getattr(self, v)()
+                if self.break_submit:
+                    self.retry_time = 0
+                    Log.v(self.break_msg)
+                    break
                 Log.v(msg)
                 if not status:
                     self.retry_time -= 1
@@ -255,5 +263,5 @@ class NormalSubmitDcOrder(object):
                 Log.v("提交订单成功, 订单号为 {0}, 请登录12036在30分钟内完成支付".format(self.order_id))
                 return True
             Log.v("提交订单失败, 正在为你重试提交")
-        Log.v("重试已经超过设定次数, 提交失败")
+        Log.v("重试已经超过设定次数, 提交失败, 重新查询余票")
         return False
