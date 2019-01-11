@@ -1,4 +1,5 @@
 import copy
+from itertools import chain
 
 from prettytable import PrettyTable
 
@@ -55,6 +56,8 @@ class QueryFilter(object):
 
     def __init__(self, data):
         self.data = data
+        self.enough_result = []
+        self.may_not_enough_result = []
         self.result = []
 
     def filter_by_seat(self):
@@ -64,8 +67,14 @@ class QueryFilter(object):
                 for p in v1.__slots__:
                     if isinstance(getattr(v1, p).value, str) and \
                             getattr(v1, p).verbose == v.name and getattr(v1, p).value:
-                        if getattr(v1, p).value == '有' or getattr(v1, p).value.isnumeric():
-                            self.result.append([v, copy.copy(v1)])
+                        if getattr(v1, p).value == '有':
+                            self.enough_result.append([v, copy.copy(v1)])
+                        if getattr(v1, p).value.isnumeric():
+                            self.may_not_enough_result.append([v, copy.copy(v1)])
+        # 按照余票信息重新排序, 显示为有的放前面, 按照设定的席别进行排序
+        self.enough_result = [[v1 for v1 in self.enough_result if v1[0] == v]for v in seat_objs]
+        self.may_not_enough_result = [[v1 for v1 in self.may_not_enough_result if v1[0] == v] for v in seat_objs]
+        self.result = list(chain(*[v + self.may_not_enough_result[index] for index, v in enumerate(self.enough_result)]))
 
     def filter_train_time(self):
         return list(

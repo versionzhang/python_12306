@@ -9,7 +9,7 @@ class LocalSimpleCache(object):
         """
         :param raw_data: 需要导出的数据
         :param pickle_name: 导出的pickle名称
-        :param expire_time: 过期时间,单位小时
+        :param expire_time: 过期时间, 单位小时
         """
         self.current = datetime.datetime.now()
         self.pickle_name = pickle_name

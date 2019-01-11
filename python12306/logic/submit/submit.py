@@ -205,7 +205,9 @@ class NormalSubmitDcOrder(object):
         if status:
             self.wait_time = json_response['data']['waitTime']
             self.order_id = json_response['data']['orderId']
-            msg += " 排队等待时间预计还剩 {0} ms".format(self.wait_time)
+            people_count = json_response["data"]["waitCount"]
+            msg += " 排队等待时间预计还剩 {0} ms, 排队人数还剩 {1} 人".format(
+                self.wait_time, people_count)
             if not self.order_id:
                 msg +="\n 订单暂未生成"
         return status, msg

@@ -107,6 +107,11 @@ def find_by_names(f_type, names):
     :return:
     """
     m = dict(seat=SeatTypeList, tour=TourTypeList, ticket=TicketTypeList)
-    data = list(filter(lambda x: x.name in names, m[f_type]))
-    return data
+    # 更新排序按照传入的names的key值排序
+    result = []
+    for name in names:
+        for v in m[f_type]:
+            if v.name == name:
+                result.append(v)
+    return result
 
