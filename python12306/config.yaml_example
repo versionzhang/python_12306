@@ -62,7 +62,7 @@ basic_config:
   ticket_people_list:
     - "张三"
 
-  # 查询余票时间间隔
+  # 查询余票时间间隔, 单位为秒, 可以设置为小数,例如4.5
   query_left_ticket_time: 5
 
   # 登录重试次数
@@ -98,12 +98,12 @@ email_config:
   email_port: 25
 
 # 是否开启邮箱通知, True or False
-# TODO: 功能添加
 email_notice_enable: True
+
 # 是否开启cdn查询, True or False, 目前还未添加
+
 # TODO: 功能添加
 cdn_enable: True
 
-# TODO: 刷票间隔时间
 
 
