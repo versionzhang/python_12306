@@ -9,7 +9,7 @@ def parsing_config():
     :return: s  字典
     """
     path = os.path.join(os.path.dirname(__file__), 'config.yaml')
-    with open(path, 'r') as f:
+    with open(path, 'r', encoding='utf-8') as f:
         s = yaml.load(f)
     return s
 
