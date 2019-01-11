@@ -62,6 +62,9 @@ basic_config:
   ticket_people_list:
     - "张三"
 
+  # 查询余票时间间隔
+  query_left_ticket_time: 5
+
   # 登录重试次数
   retry_login_time: 5
 

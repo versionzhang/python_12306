@@ -16,7 +16,7 @@ Usage
 ---------------------------------
 1. 安装依赖库, `pip install -r requriement.txt`
 2. 进入python12306文件夹,然后复制config.yaml_exmpale为config.yaml,按照说明修改配置文件
-3. 安装好依赖之后,进入python12306文件夹, 运行`python test.py`来进行抢票
+3. 安装好依赖之后,进入python12306文件夹, 运行`python mainloop.py`来进行抢票
 
 Notice
 ---------------------------------
