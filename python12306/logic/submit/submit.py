@@ -63,12 +63,14 @@ class NormalSubmitDcOrder(object):
             'query_to_station_name': self.train.to_station.value.name,
             'undefined': '',
         }
+        Log.v("请求预提交订单")
         json_response = send_requests(LOGIN_SESSION, self.URLS['submitOrderRequest'], data=form_data)
-        return submit_response_checker(json_response, ["status"], True)
+        return submit_response_checker(json_response, ["status"], True,
+                                       "请求预提交订单成功")
 
     def _get_submit_token(self):
         html = send_requests(LOGIN_SESSION, self.URLS['getExtraInfo'])
-        Log.v("获取globalRepeatSubmitToken,用于订单提交")
+        Log.v("获取token中....")
         result = re.findall(r"var globalRepeatSubmitToken = '(.*)'", html)
         ticket_passenger_info = re.findall(r'var ticketInfoForPassengerForm=(.*);', html)
         if result:
@@ -80,11 +82,13 @@ class NormalSubmitDcOrder(object):
                 Log.w("获取submit info失败")
                 return False
         if self.token and self.ticket_passenger_info:
+            Log.v("成功获取token与以及车次信息")
             return True
         else:
             return False
 
     def _get_passenger_data(self):
+        Log.v("获取乘客信息中..")
         if PassengerData.passenger:
             self.passenger_data = PassengerData.find_people_by_names(Config.basic_config.ticket_people_list)
             # get token from html file.
@@ -93,7 +97,9 @@ class NormalSubmitDcOrder(object):
                     break
                 else:
                     self._get_submit_token()
-            return True, "使用缓存的乘客信息导入成功"
+            msg = "使用缓存的乘客信息导入成功"
+            Log.v(msg)
+            return True, msg
         # 获取乘客信息并保存
         while not self.passenger_data:
             form_data = {
@@ -101,7 +107,7 @@ class NormalSubmitDcOrder(object):
                 'REPEAT_SUBMIT_TOKEN': self.token
             }
             json_response = send_requests(LOGIN_SESSION, self.URLS['getPassengerDTOs'], data=form_data)
-            status, msg = submit_response_checker(json_response, ["status"], True)
+            status, msg = submit_response_checker(json_response, ["status"], True, "获取乘客信息成功")
             if status:
                 # write data to passenger data.
                 PassengerData.raw_data = json_response['data']['normal_passengers']
@@ -112,7 +118,7 @@ class NormalSubmitDcOrder(object):
                         break
                     else:
                         self._get_submit_token()
-                return True, "OK"
+                return True, "获取乘客信息, Token信息成功"
             else:
                 return False, "获取乘客信息失败"
 
@@ -129,8 +135,9 @@ class NormalSubmitDcOrder(object):
             '_json_att': '',
             'REPEAT_SUBMIT_TOKEN': self.token,
         }
+        Log.v("正在提交检查订单状态请求")
         json_response = send_requests(LOGIN_SESSION, self.URLS['checkOrderInfo'], data=form_data)
-        status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True)
+        status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True, "校验订单成功")
         return status, msg
 
     def _get_queue_count(self):
@@ -149,10 +156,15 @@ class NormalSubmitDcOrder(object):
             '_json_att': '',
             'REPEAT_SUBMIT_TOKEN': self.token
         }
+        Log.v("正在获取排队信息以及余票信息中...")
         json_response = send_requests(LOGIN_SESSION, self.URLS['getQueueCount'], data=form_data)
-        status, msg = submit_response_checker(json_response, ["status"], True)
+        status, msg = submit_response_checker(json_response, ["status"], True, "获取余票信息成功")
         if status:
             self.left_tickets = json_response['data']['ticket']
+            Log.v("票数剩余{0}张, 排队人数为{1}人".format(
+                self.left_tickets,
+                json_response['data']['count']
+            ))
         else:
             BlackTrains.add_train(self.train)
         return status, msg
@@ -174,8 +186,10 @@ class NormalSubmitDcOrder(object):
             '_json_att': '',
             'REPEAT_SUBMIT_TOKEN': self.token,
         }
+        Log.v("正在为你请求排队提交订单")
         json_response = send_requests(LOGIN_SESSION, self.URLS['confirmForQueue'], data=form_data)
-        status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True)
+        status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True,
+                                              "请求排队成功")
         return status, msg
 
     def _query_order_wait_time(self):
@@ -185,11 +199,15 @@ class NormalSubmitDcOrder(object):
             '_json_att': '',
             'REPEAT_SUBMIT_TOKEN': self.token
         }
+        Log.v("获取订单排队信息...")
         json_response = send_requests(LOGIN_SESSION, self.URLS['queryOrderWaitTime'], params=params)
-        status, msg = submit_response_checker(json_response, ["status"], True)
+        status, msg = submit_response_checker(json_response, ["status"], True, "排队请求成功")
         if status:
             self.wait_time = json_response['data']['waitTime']
             self.order_id = json_response['data']['orderId']
+            msg += " 排队等待时间预计还剩 {0} ms".format(self.wait_time)
+            if not self.order_id:
+                msg +="\n 订单暂未生成"
         return status, msg
 
     def _wait_for_order_id(self):
@@ -199,6 +217,7 @@ class NormalSubmitDcOrder(object):
         while self.wait_time and self.wait_time >= 0:
             loop_time = datetime.datetime.now()
             status, msg = self._query_order_wait_time()
+            Log.v(msg)
             time.sleep(5)
             if self.order_id:
                 return True, "OK"
@@ -212,19 +231,22 @@ class NormalSubmitDcOrder(object):
             '_json_att': '',
             'REPEAT_SUBMIT_TOKEN': self.token,
         }
+        Log.v("检查已提交的订单的状态中...")
         json_response = send_requests(LOGIN_SESSION, self.URLS['resultOrderForQueue'], params=params)
-        status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True)
+        status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True, "订单已经成功提交")
         return status, msg
 
     def run(self):
         while self.retry_time:
             for v in NORMAL_PIPELINE:
                 status, msg = getattr(self, v)()
+                Log.v(msg)
                 if not status:
                     self.retry_time -= 1
                     break
             else:
-                Log.v("提交订单成功")
+                Log.v("提交订单成功, 订单号为 {0}, 请登录12036在30分钟内完成支付".format(self.order_id))
                 return True
-        Log.v("提交订单失败")
+            Log.v("提交订单失败, 正在为你重试提交")
+        Log.v("重试已经超过设定次数, 提交失败")
         return False

@@ -127,10 +127,15 @@ def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
     return None
 
 
-def submit_response_checker(response, ok_columns, ok_code):
+def submit_response_checker(response, ok_columns, ok_code, msg="OK"):
     back_response = copy.copy(response)
     if not isinstance(response, (list, dict)):
         return False, '数据非json数据'
+    messages = back_response.get("back_response", "")
+    if isinstance("messages", list):
+        Log.v("\n".join(messages))
+    elif isinstance("messages", str):
+        Log.v(messages)
     for v in ok_columns:
         response = back_response
         nest = v.split('.')
@@ -143,7 +148,7 @@ def submit_response_checker(response, ok_columns, ok_code):
         if response != ok_code:
             return False, "字段状态不存在"
     del back_response
-    return True, "OK"
+    return True, msg
 
 
 def json_status(json_response, check_column, ok_code=0):
