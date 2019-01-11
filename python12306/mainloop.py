@@ -3,6 +3,7 @@ import random
 import time
 
 from global_data.session import LOGIN_SESSION
+from logic.login.checkuser import OnlineChecker, OnlineCheckerTool
 from logic.login.login import NormalLogin
 from logic.query.query import Query
 from config import Config
@@ -18,35 +19,51 @@ class Schedule(object):
     login_status = False
     order_id = ''
 
-    def run(self):
-        s = LocalSimpleCache('', 'logincookie.pickle').get_final_data()
-        if not s.raw_data:
-            count = 0
-            while self.retry_login_time:
-                l = NormalLogin()
-                Log.v("正在为您登录")
-                status, msg = l.login()
-                if not status:
-                    count += 1
-                    Log.v("登录失败, 重试{0}次".format(count))
-                    self.retry_login_time -= 1
-                    continue
-                else:
-                    Log.v("登录成功")
-                    Log.v("导出已经登录的cookie,已便下次使用")
-                    Log.v("cookie的有效期为 {0}小时".format(s.expire_time))
-                    s.raw_data = LOGIN_SESSION.cookies
-                    s.export_pickle()
-                    break
-            if not self.retry_login_time:
-                Log.v("重试次数已经超过设置")
-                return
+    def login(self):
+        count = 0
+        while self.retry_login_time > count:
+            l = NormalLogin()
+            Log.v("正在为您登录")
+            status, msg = l.login()
+            if not status:
+                count += 1
+                Log.v("登录失败, 重试{0}次".format(count))
+                continue
+            else:
+                Log.v("登录成功")
+                break
+        if not self.retry_login_time <= count:
+            Log.v("重试次数已经超过设置")
+            return False
+        return True
+
+    def online_checker(self):
+        # 两分钟检测一次
+        flag =  OnlineCheckerTool.should_check_online(datetime.datetime.now())
+        if flag:
+            status, msg = OnlineCheckerTool.checker()
+            OnlineCheckerTool.update_check_time()
+            if not status:
+                Log.v("用户登录失效, 正在为您重试登录")
+                l = self.login()
+                if not l:
+                    return False, "重试登录失败"
+            else:
+                return status, msg
         else:
-            Log.v("加载已经登录的cookie")
-            LOGIN_SESSION.cookies.update(s.raw_data)
+            status, msg = True, "用户状态检测:未到检测时间"
+        return status, msg
+
+    def run(self):
+        self.login()
+        if not Config.auto_code_enable:
+            Log.v("未开启自动打码功能, 不检测用户登录状态")
         Log.v("正在查询车次余票信息")
         count = 0
         while True:
+            if Config.auto_code_enable:
+                status, msg = self.online_checker()
+                Log.v(msg)
             count += 1
             n = datetime.datetime.now()
             q = Query()
@@ -54,7 +71,7 @@ class Schedule(object):
             if not data:
                 Log.v("满足条件的车次暂无余票,正在重新查询")
             for v in data:
-                print("当前座位席别 {}".format(v[0].name))
+                print("\t\t\t当前座位席别 {}".format(v[0].name))
                 q.pretty_output(v[1])
             delta_time = datetime.datetime.now() - n
             try:

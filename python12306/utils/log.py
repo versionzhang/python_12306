@@ -34,7 +34,7 @@ class LogUtils(object):
         l = getattr(ticket_logger, msg_type)
         if type(msg) == str:
             if Config.basic_config.debug or msg_type != 'debug':
-                print(maping[msg_type] + msg + Fore.RESET)
+                print("\t\t\t" +maping[msg_type] + msg + Fore.RESET)
             l(msg)
         else:
             if Config.basic_config.debug or msg_type != 'debug':
