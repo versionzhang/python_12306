@@ -5,7 +5,7 @@ import time
 import urllib.parse
 
 from config import Config
-from global_data.const_data import find_by_name
+from global_data.const_data import find_by_name, find_by_phrase
 from global_data.session import LOGIN_SESSION
 from global_data.url_conf import SUBMIT_URL_MAPPING
 from pre_processing.passengers import PassengerData
@@ -224,11 +224,10 @@ class NormalSubmitDcOrder(object):
             loop_time = datetime.datetime.now()
             status, msg = self._query_order_wait_time()
             Log.v(msg)
-            if "没有足够的票" in msg:
-                self.break_submit = True
-                self.break_msg = "没有足够的票"
-                # TODO: 添加车次到小黑屋
-                return False, "没有足够的票"
+            s, data = find_by_phrase(msg)
+            if s:
+                self.break_submit, self.break_msg = False, data["msg"]
+                return self.break_submit, self.break_msg
             time.sleep(5)
             if self.order_id:
                 return True, "OK"

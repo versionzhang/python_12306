@@ -80,10 +80,22 @@ TICKET_DATA = [
     }
 ]
 
+SUBMIT_ERR_MESSAGES_LIST = [
+    {"msg": "没有足够的票"},
+    {"msg": "存在与本次购票行程冲突的车票"}
+]
+
 TourTypeList  = [TourMapping(v) for v in TOUR_DATA]
 SeatTypeList = [SeatMapping(v) for v in SEAT_DATA]
 TicketTypeList = [TicketMapping(v) for v in TICKET_DATA]
 
+
+def find_by_phrase(msg):
+    data = list(filter(lambda x: msg in x["msg"], SUBMIT_ERR_MESSAGES_LIST))
+    if data:
+        return True, data[0]
+    else:
+        return False, None
 
 
 def find_by_name(f_type, name):
