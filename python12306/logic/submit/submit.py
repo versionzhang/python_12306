@@ -209,7 +209,9 @@ class NormalSubmitDcOrder(object):
             msg += " 排队等待时间预计还剩 {0} ms, 排队人数还剩 {1} 人".format(
                 self.wait_time, people_count)
             if not self.order_id:
-                msg +="\n 订单暂未生成"
+                msg +="\t 订单暂未生成"
+            if "msg" in json_response["data"]:
+                msg += "\t {0}".format(json_response["data"]["msg"])
         return status, msg
 
     def _wait_for_order_id(self):
@@ -220,6 +222,9 @@ class NormalSubmitDcOrder(object):
             loop_time = datetime.datetime.now()
             status, msg = self._query_order_wait_time()
             Log.v(msg)
+            if "没有足够的票" in msg:
+                # TODO: 添加车次到小黑屋
+                return False, "没有足够的票"
             time.sleep(5)
             if self.order_id:
                 return True, "OK"

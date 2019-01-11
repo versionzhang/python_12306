@@ -9,7 +9,7 @@ logger = logging.getLogger()
 ticket_logger = logging.getLogger('ticket')
 ticket_logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter(
-    '[%(asctime)s] %(pathname)s:%(lineno)d %(levelname)s - %(message)s', '%Y-%m-%d %H:%M:%S'
+    '[%(asctime)s] %(levelname)s - %(message)s', '%Y-%m-%d %H:%M:%S'
 )
 
 # Add the log message handler to the logger

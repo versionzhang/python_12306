@@ -36,7 +36,7 @@ class BlackTrainList(object):
         now = datetime.datetime.now()
         # 过滤掉已经过期的数据
         self.trains = list(
-            filter(lambda x: datetime.timedelta(minutes=Config.basic_config.black_train_time) + v[0] > now,
+            filter(lambda x: datetime.timedelta(minutes=Config.basic_config.black_train_time) + x[0] > now,
                    self.trains))
         for v in self.trains:
             if v[1].sys_train_no.value == train_no:
