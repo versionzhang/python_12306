@@ -6,7 +6,7 @@ from PIL import Image
 import requests
 from hashlib import md5
 
-from comonexception import ResponseCodeError
+from comonexception import ResponseCodeError, ResponseError
 from global_data.session import LOGIN_SESSION
 from global_data.url_conf import LOGIN_URL_MAPPING
 from global_data.useragent import CHROME_USER_AGENT
@@ -66,6 +66,7 @@ class NormalCaptchaUtil(object):
                 data = get_captcha_image(LOGIN_SESSION, LOGIN_URL_MAPPING["normal"]["captcha"])
                 break
             except ResponseCodeError:
+                Log.v("获取验证码信息失败,重试获取验证码中...")
                 continue
         img_binary = base64.b64decode(data["image"])
         return img_binary
@@ -76,9 +77,15 @@ class NormalCaptchaUtil(object):
             'rand': 'sjrand',
             'login_site': 'E'
         }
-        json_response = send_captcha_requests(LOGIN_SESSION,
-                                              LOGIN_URL_MAPPING["normal"]["captchaCheck"],
-                                              params=params_data)
+        while True:
+            try:
+                json_response = send_captcha_requests(LOGIN_SESSION,
+                                                      LOGIN_URL_MAPPING["normal"]["captchaCheck"],
+                                                      params=params_data)
+                break
+            except (ResponseCodeError , ResponseError):
+                Log.v("提交验证码错误, 重新提交验证码验证")
+                continue
         Log.v('验证码校验结果: %s' % json_response)
         status, msg = json_status(json_response, [], ok_code=self.success_code)
         if not status:
