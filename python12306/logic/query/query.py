@@ -17,10 +17,12 @@ from utils.data_structure import TrainDetail
 
 class Query(object):
 
-    @staticmethod
-    def run_query():
+    def __init__(self, travel_date):
+        self.travel_date = travel_date
+
+    def run_query(self):
         params = {
-            r'leftTicketDTO.train_date': Config.basic_config.travel_dates,
+            r'leftTicketDTO.train_date': self.travel_date,
             r'leftTicketDTO.from_station': CityData.find_city_by_name(Config.basic_config.from_station).code,
             r'leftTicketDTO.to_station': CityData.find_city_by_name(Config.basic_config.to_station).code,
             r'purpose_codes': find_by_name("ticket", Config.basic_config.ticket_type).sys_code
@@ -48,8 +50,6 @@ class Query(object):
         data = self.run_query()
         q = QueryFilter(data)
         return q.filter()
-        # for v in q.result:
-        #     self.pretty_output(v)
 
 
 class QueryFilter(object):

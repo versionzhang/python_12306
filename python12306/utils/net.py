@@ -131,11 +131,14 @@ def submit_response_checker(response, ok_columns, ok_code, msg="OK"):
     back_response = copy.copy(response)
     if not isinstance(response, (list, dict)):
         return False, '数据非json数据'
-    messages = back_response.get("back_response", "")
-    if isinstance("messages", list):
+    messages = back_response.get("messages", "")
+    if messages and isinstance("messages", list):
         Log.v("\n".join(messages))
-    elif isinstance("messages", str):
+    if messages and isinstance("messages", str):
         Log.v(messages)
+    err_msg = back_response.get("data", {}).get("errMsg", "")
+    if err_msg:
+        Log.v(err_msg)
     for v in ok_columns:
         response = back_response
         nest = v.split('.')
