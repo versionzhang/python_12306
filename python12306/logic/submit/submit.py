@@ -167,6 +167,8 @@ class NormalSubmitDcOrder(object):
         json_response = send_requests(LOGIN_SESSION, self.URLS['confirmForQueue'], data=form_data)
         status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True,
                                               "请求排队成功")
+        if not status:
+            BlackTrains.add_train(self.train)
         return status, msg
 
     def _query_order_wait_time(self):

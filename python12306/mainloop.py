@@ -16,7 +16,6 @@ from utils.log import Log
 
 class Schedule(object):
     retry_login_time = Config.basic_config.retry_login_time
-    login_status = False
     order_id = ''
     query_mode = 'normal' # presale or normal
 
@@ -73,6 +72,26 @@ class Schedule(object):
     def query_dispatch(self):
         pass
 
+    @staticmethod
+    def check_maintain():
+        # 12306 系统维护时间
+        now = datetime.datetime.now()
+        morning_time = datetime.datetime(year=now.year,
+                                         month=now.month,
+                                         day=now.day,
+                                         hour=6,
+                                         minute=0
+                                         )
+        evening_time = datetime.datetime(year=now.year,
+                                         month=now.month,
+                                         day=now.day,
+                                         hour=23,
+                                         minute=0
+                                         )
+        if now > evening_time or now < morning_time:
+            return True
+        else:
+            return False
 
     def run(self):
         self.login()
@@ -86,6 +105,8 @@ class Schedule(object):
         count = 0
 
         while True:
+            while self.check_maintain():
+                Log.v("12306系统每天 23:00 - 6:00 之间 维护中, 程序暂时停止运行")
             if Config.auto_code_enable:
                 status, msg = self.online_checker()
                 Log.v(msg)
@@ -95,7 +116,7 @@ class Schedule(object):
             data = q.filter()
 
             if not data:
-                Log.v("满足条件的车次暂无余票,正在重新查询")
+                Log.v("满足条件的车次暂无余票, 正在重新查询")
 
             for v in data:
                 print("\t\t\t当前座位席别 {}".format(v[0].name))

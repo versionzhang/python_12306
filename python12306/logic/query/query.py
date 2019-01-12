@@ -10,6 +10,7 @@ from pre_processing.cities import CityData
 from utils.log import Log
 
 from global_data.session import LOGIN_SESSION
+from utils.lookup import BlackTrains
 from utils.net import send_requests
 
 from utils.data_structure import TrainDetail
@@ -76,6 +77,16 @@ class QueryFilter(object):
         self.may_not_enough_result = [[v1 for v1 in self.may_not_enough_result if v1[0] == v] for v in seat_objs]
         self.result = list(chain(*[v + self.may_not_enough_result[index] for index, v in enumerate(self.enough_result)]))
 
+    def filter_black_trains(self):
+        result = []
+        for v in self.result:
+            flag = BlackTrains.check(v[1].sys_train_no.value)
+            if flag:
+                Log.v("将 {0} 加入小黑屋".format(v[1].sys_train_no.value))
+            else:
+                result.append(copy.copy(v))
+        return result
+
     def filter_train_time(self):
         return list(
             filter(
@@ -102,6 +113,8 @@ class QueryFilter(object):
     def filter(self):
         # 先过滤席位
         self.filter_by_seat()
+        # 过滤小黑屋的车次
+        self.result = self.filter_black_trains()
         if self.result:
             Log.v("查找到符合配置的车次信息: {0}".format(','.join(
                 [v[1].stationTrainCode.value for v in self.result])))
