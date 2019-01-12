@@ -28,7 +28,10 @@ class NormalLogin(object):
 
     def _uamauthclient(self, apptk):
         json_response = send_requests(LOGIN_SESSION, self.URLS['uamauthclient'], data={'tk': apptk})
-        return json_status(json_response, ["username", "result_message"])
+        status, msg = json_status(json_response, ["username", "result_message"])
+        if status:
+            Log.v("欢迎 {0} 登录".format(json_response["username"]))
+        return status, msg
 
     def login(self):
         self._init()

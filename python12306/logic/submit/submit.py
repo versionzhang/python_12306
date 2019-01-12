@@ -8,7 +8,7 @@ from config import Config
 from global_data.const_data import find_by_name, find_by_phrase
 from global_data.session import LOGIN_SESSION
 from global_data.url_conf import SUBMIT_URL_MAPPING
-from pre_processing.passengers import PassengerData
+from logic.login.passager import QueryPassengerTool
 from utils.log import Log
 from utils.lookup import build_passenger_ticket_string, build_oldpassenger_ticket_string, BlackTrains
 from utils.net import send_requests, submit_response_checker
@@ -90,39 +90,14 @@ class NormalSubmitDcOrder(object):
             return False
 
     def _get_passenger_data(self):
-        Log.v("获取乘客信息中..")
-        if PassengerData.passenger:
-            self.passenger_data = PassengerData.find_people_by_names(Config.basic_config.ticket_people_list)
+            self.passenger_data = QueryPassengerTool.config_passengers
             # get token from html file.
             while True:
                 if self.token and self.ticket_passenger_info:
                     break
                 else:
                     self._get_submit_token()
-            msg = "使用缓存的乘客信息导入成功"
-            Log.v(msg)
-            return True, msg
-        # 获取乘客信息并保存
-        while not self.passenger_data:
-            form_data = {
-                '_json_att': '',
-                'REPEAT_SUBMIT_TOKEN': self.token
-            }
-            json_response = send_requests(LOGIN_SESSION, self.URLS['getPassengerDTOs'], data=form_data)
-            status, msg = submit_response_checker(json_response, ["status"], True, "获取乘客信息成功")
-            if status:
-                # write data to passenger data.
-                PassengerData.raw_data = json_response['data']['normal_passengers']
-                PassengerData.get_final_data()
-                self.passenger_data = PassengerData.find_people_by_names(Config.basic_config.ticket_people_list)
-                while True:
-                    if self.token and self.ticket_passenger_info:
-                        break
-                    else:
-                        self._get_submit_token()
-                return True, "获取乘客信息, Token信息成功"
-            else:
-                return False, "获取乘客信息失败"
+            return True, "导入乘客信息成功"
 
     def _check_order_info(self):
         form_data = {

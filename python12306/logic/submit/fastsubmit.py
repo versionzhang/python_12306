@@ -7,7 +7,7 @@ from config import Config
 from global_data.const_data import find_by_name
 from global_data.session import LOGIN_SESSION
 from global_data.url_conf import FAST_SUBMIT_URL_MAPPING
-from pre_processing.passengers import PassengerData
+from logic.login.passager import QueryPassengerTool
 from logic.submit.submit import NormalSubmitDcOrder
 from utils.log import Log
 from utils.lookup import build_passenger_ticket_string, build_oldpassenger_ticket_string, BlackTrains
@@ -37,21 +37,8 @@ class FastSubmitDcOrder(NormalSubmitDcOrder):
     retry_time = 1
 
     def _get_passenger_data(self):
-        if PassengerData.passenger:
-            self.passenger_data = PassengerData.find_people_by_names(Config.basic_config.ticket_people_list)
-            return True, "使用缓存的乘客信息导入成功"
-        # 获取乘客信息并保存
-        while not self.passenger_data:
-            json_response = send_requests(LOGIN_SESSION, self.URLS['getPassengerDTOs'])
-            status, msg = submit_response_checker(json_response, ["status"], True)
-            if status:
-                # write data to passenger data.
-                PassengerData.raw_data = json_response['data']['normal_passengers']
-                PassengerData.get_final_data()
-                self.passenger_data = PassengerData.find_people_by_names(Config.basic_config.ticket_people_list)
-                return True, "OK"
-            else:
-                return False, "获取乘客信息失败"
+        self.passenger_data = QueryPassengerTool.config_passengers
+        return True, "获取乘客信息成功"
 
     def _auto_submit_order_request(self):
         """

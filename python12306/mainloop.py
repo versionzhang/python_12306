@@ -5,6 +5,7 @@ import time
 from global_data.session import LOGIN_SESSION
 from logic.login.checkuser import OnlineChecker, OnlineCheckerTool
 from logic.login.login import NormalLogin
+from logic.login.passager import QueryPassengerTool
 from logic.query.query import Query
 from config import Config
 from logic.submit.fastsubmit import FastSubmitDcOrder
@@ -65,12 +66,19 @@ class Schedule(object):
         else:
             return status, msg
 
+    @staticmethod
+    def query_passengers():
+        return QueryPassengerTool.filter_by_config()
+
     def query_dispatch(self):
         pass
 
 
     def run(self):
         self.login()
+        p_status = self.query_passengers()
+        if not p_status:
+            return
         if not Config.auto_code_enable:
             Log.v("未开启自动打码功能, 不检测用户登录状态")
         Log.v("正在查询车次余票信息")
@@ -100,7 +108,7 @@ class Schedule(object):
             except AttributeError:
                 delta = 4 + random.random()
             time.sleep(delta)
-            Log.v("查询第 {0} 次, 当次查询时间间隔为 {1} 秒, 查询请求处理时间 {2} 秒".format(
+            Log.v("查询第 {0} 次, 当次查询时间间隔为 {1:.3} 秒, 查询请求处理时间 {2:.3} 秒".format(
                 count, delta, delta_time.total_seconds()))
             for v in data:
                 if Config.basic_config.fast_submit:
