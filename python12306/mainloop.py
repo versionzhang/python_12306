@@ -135,6 +135,11 @@ class Schedule(object):
         while True:
             if self.check_maintain():
                 Log.v("12306系统每天 23:00 - 6:00 之间 维护中, 程序暂时停止运行")
+                maintain_time = self.delta_maintain_time()
+                Log.v("{0}小时 {1}分钟 {2}秒之后重新启动".format(
+                    maintain_time.seconds//3600,
+                    (maintain_time.seconds//60) % 60,
+                    maintain_time.seconds % 3600 % 60))
                 time.sleep(self.delta_maintain_time().total_seconds())
             if Config.auto_code_enable:
                 status, msg = self.online_checker()
