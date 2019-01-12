@@ -136,9 +136,6 @@ def submit_response_checker(response, ok_columns, ok_code, msg="OK"):
         Log.v("\n".join(messages))
     if messages and isinstance("messages", str):
         Log.v(messages)
-    err_msg = back_response.get("data", {}).get("errMsg", "")
-    if err_msg:
-        Log.v(err_msg)
     for v in ok_columns:
         response = back_response
         nest = v.split('.')
