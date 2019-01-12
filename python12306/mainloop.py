@@ -93,6 +93,36 @@ class Schedule(object):
         else:
             return False
 
+    @staticmethod
+    def delta_maintain_time():
+        # 12306 系统维护时间
+        now = datetime.datetime.now()
+        morning_time = datetime.datetime(year=now.year,
+                                         month=now.month,
+                                         day=now.day,
+                                         hour=5,
+                                         minute=59,
+                                         second=56
+                                         )
+        next_morning_time = datetime.datetime(year=now.year,
+                                              month=now.month,
+                                              day=now.day,
+                                              hour=5,
+                                              minute=59,
+                                              second=56
+                                              ) + datetime.timedelta(days=1)
+        evening_time = datetime.datetime(year=now.year,
+                                         month=now.month,
+                                         day=now.day,
+                                         hour=23,
+                                         minute=0
+                                         )
+        if now > evening_time:
+            return next_morning_time - now
+        if now < morning_time:
+            return morning_time - now
+
+
     def run(self):
         self.login()
         p_status = self.query_passengers()
@@ -105,8 +135,9 @@ class Schedule(object):
         count = 0
 
         while True:
-            while self.check_maintain():
+            if self.check_maintain():
                 Log.v("12306系统每天 23:00 - 6:00 之间 维护中, 程序暂时停止运行")
+                time.sleep(self.delta_maintain_time().total_seconds())
             if Config.auto_code_enable:
                 status, msg = self.online_checker()
                 Log.v(msg)
