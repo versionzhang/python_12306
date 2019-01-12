@@ -90,14 +90,14 @@ class NormalSubmitDcOrder(object):
             return False
 
     def _get_passenger_data(self):
-            self.passenger_data = QueryPassengerTool.config_passengers
-            # get token from html file.
-            while True:
-                if self.token and self.ticket_passenger_info:
-                    break
-                else:
-                    self._get_submit_token()
-            return True, "导入乘客信息成功"
+        self.passenger_data = QueryPassengerTool.config_passengers
+        # get token from html file.
+        while True:
+            if self.token and self.ticket_passenger_info:
+                break
+            else:
+                self._get_submit_token()
+        return True, "导入乘客信息成功"
 
     def _check_order_info(self):
         form_data = {
@@ -188,7 +188,7 @@ class NormalSubmitDcOrder(object):
             msg += " 排队等待时间预计还剩 {0} ms, 排队人数还剩 {1} 人".format(
                 self.wait_time, people_count)
             if not self.order_id:
-                msg +="\t 订单暂未生成"
+                msg += "\t 订单暂未生成"
             if "msg" in json_response["data"]:
                 msg += "\t {0}".format(json_response["data"]["msg"])
         return status, msg

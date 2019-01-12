@@ -2,8 +2,7 @@ import datetime
 import random
 import time
 
-from global_data.session import LOGIN_SESSION
-from logic.login.checkuser import OnlineChecker, OnlineCheckerTool
+from logic.login.checkuser import OnlineCheckerTool
 from logic.login.login import NormalLogin
 from logic.login.passager import QueryPassengerTool
 from logic.query.query import Query
@@ -17,14 +16,14 @@ from utils.log import Log
 class Schedule(object):
     retry_login_time = Config.basic_config.retry_login_time
     order_id = ''
-    query_mode = 'normal' # presale or normal
+    query_mode = 'normal'  # presale or normal
 
     def login(self):
         count = 0
         while self.retry_login_time > count:
-            l = NormalLogin()
+            login_instance = NormalLogin()
             Log.v("正在为您登录")
-            status, msg = l.login()
+            status, msg = login_instance.login()
             if not status:
                 count += 1
                 Log.v("登录失败, 重试{0}次".format(count))
@@ -39,14 +38,14 @@ class Schedule(object):
 
     def online_checker(self):
         # 两分钟检测一次
-        flag =  OnlineCheckerTool.should_check_online(datetime.datetime.now())
+        flag = OnlineCheckerTool.should_check_online(datetime.datetime.now())
         if flag:
             status, msg = OnlineCheckerTool.checker()
             OnlineCheckerTool.update_check_time()
             if not status:
                 Log.v("用户登录失效, 正在为您重试登录")
-                l = self.login()
-                if not l:
+                login_status = self.login()
+                if not login_status:
                     return False, "重试登录失败"
             else:
                 return status, msg
@@ -59,8 +58,8 @@ class Schedule(object):
         OnlineCheckerTool.update_check_time()
         if not status:
             Log.v("用户登录失效, 正在为您重试登录")
-            l = self.login()
-            if not l:
+            login_status = self.login()
+            if not login_status:
                 return False, "重试登录失败"
         else:
             return status, msg
@@ -122,7 +121,6 @@ class Schedule(object):
         if now < morning_time:
             return morning_time - now
 
-
     def run(self):
         self.login()
         p_status = self.query_passengers()
@@ -179,6 +177,7 @@ class Schedule(object):
         Log.v("抢票成功，如果有配置邮箱，稍后会收到邮件通知")
         # 抢票成功发邮件信息
         send_email(2, **{"order_no": self.order_id})
+
 
 if __name__ == "__main__":
     instance = Schedule()

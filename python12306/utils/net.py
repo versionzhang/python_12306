@@ -103,7 +103,7 @@ def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
                                                data=params))
         if data:
             Log.d("{url} Post 参数 {data}".format(url=urlmapping_obj.url,
-                                               data=data))
+                                                data=data))
         Log.d("返回response url {url}".format(url=response.url))
         if response.status_code == requests.codes.ok:
             if 'xhtml+xml' in response.headers['Content-Type']:
@@ -114,7 +114,7 @@ def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
             if 'json' in response.headers['Content-Type']:
                 result = response.json()
                 Log.d("{url} 返回值 {result}".format(url=urlmapping_obj.url,
-                                                    result=result))
+                                                  result=result))
                 return result
             # other type
             return response.text

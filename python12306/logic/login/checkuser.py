@@ -32,7 +32,7 @@ class OnlineChecker(object):
         }
         json_response = send_requests(LOGIN_SESSION, USER_CHECK_URL_MAPPING, data=data)
         status, msg = submit_response_checker(json_response, ["status", "data.flag"], True,
-                                "用户在线状态检测:在线检测通过")
+                                              "用户在线状态检测: 在线检测通过")
         return status, msg
 
 

@@ -30,7 +30,6 @@ class PassengerTool(object):
         self.passenger = [PassengerDetail(v) for v in self.raw_data]
         return self
 
-
     def load_exists_data(self):
         if self.is_exists_pickle():
             with open(os.path.join(self.pickle_path), 'rb') as handle:

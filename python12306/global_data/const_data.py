@@ -85,7 +85,7 @@ SUBMIT_ERR_MESSAGES_LIST = [
     {"msg": "存在与本次购票行程冲突的车票"}
 ]
 
-TourTypeList  = [TourMapping(v) for v in TOUR_DATA]
+TourTypeList = [TourMapping(v) for v in TOUR_DATA]
 SeatTypeList = [SeatMapping(v) for v in SEAT_DATA]
 TicketTypeList = [TicketMapping(v) for v in TICKET_DATA]
 
@@ -126,4 +126,3 @@ def find_by_names(f_type, names):
             if v.name == name:
                 result.append(v)
     return result
-

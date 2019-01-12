@@ -17,7 +17,6 @@ from utils.log import Log
 from utils.net import send_requests, json_status, send_captcha_requests, get_captcha_image
 
 
-
 class RClient(object):
 
     def __init__(self):
@@ -83,7 +82,7 @@ class NormalCaptchaUtil(object):
                                                       LOGIN_URL_MAPPING["normal"]["captchaCheck"],
                                                       params=params_data)
                 break
-            except (ResponseCodeError , ResponseError):
+            except (ResponseCodeError, ResponseError):
                 Log.v("提交验证码错误, 重新提交验证码验证")
                 continue
         Log.v('验证码校验结果: %s' % json_response)
@@ -169,14 +168,13 @@ class Captcha(object):
         c = RClient()
         data = c.rk_create(self.generator_image())
         if "Result" in data:
-            trans = self.trans_captcha_results(','.join([str(int(v)-1) for v in data["Result"]]))
+            trans = self.trans_captcha_results(','.join([str(int(v) - 1) for v in data["Result"]]))
             self.results = trans
             return self.check(trans)
         else:
             if "Error" in data and data["Error"]:
                 Log.e("打码平台错误: {0}, 请登录打码平台查看-http://www.ruokuai.com/client/index?6726".format(data["Error"]))
                 return False, "若快打码平台错误"
-
 
     def verifyhandle_hand(self):
         img = Image.open(BytesIO(self.generator_image()))

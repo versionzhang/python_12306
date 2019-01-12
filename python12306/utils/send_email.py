@@ -17,8 +17,8 @@ EMAIL_MESSAGES = {
                 """
 你的火车票已经订票成功，订单号为{order_no}, 请登录你的12306账号进行查看并付款.
     
----by python12306 小助手
----github仓库链接 https://github.com/versionzhang/python_12306
+--- by python12306 小助手
+--- github仓库链接 https://github.com/versionzhang/python_12306
 """
         }
 }

@@ -5,5 +5,6 @@ class ResponseError(Exception):
 class ResponseCodeError(Exception):
     pass
 
+
 class AutoCodeConfigError(Exception):
     pass

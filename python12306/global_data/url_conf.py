@@ -27,7 +27,7 @@ LOGIN_URLS = {
             # use lambda function, every time to generator a different number.
             # change this link, because of web change this interface.
             'url': lambda: r'https://kyfw.12306.cn/passport/captcha/captcha-image64?login_site=E&module=login&rand=sjrand&{}'.format(
-                int(time.time()*1000)
+                int(time.time() * 1000)
             ),
             'method': 'GET',
             'response': 'json'
@@ -138,11 +138,11 @@ LOGIN_URLS = {
 }
 
 QUERY_URL = {
-        'url': r'https://kyfw.12306.cn/otn/leftTicket/queryZ',
-        'method': 'GET',
-        'headers': {
-            'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init'
-        }
+    'url': r'https://kyfw.12306.cn/otn/leftTicket/queryZ',
+    'method': 'GET',
+    'headers': {
+        'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init'
+    }
 }
 
 SUBMIT_URLS = {
@@ -286,15 +286,15 @@ FAST_SUBMIT_URLS = {
         "url": "https://kyfw.12306.cn/otn/confirmPassenger/getQueueCountAsync",
         'method': 'POST',
         'headers': {
-                'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init',
-            },
+            'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init',
+        },
     },
     "confirmSingleForQueueAsys": {  # 快速订单排队
         "url": "https://kyfw.12306.cn/otn/confirmPassenger/confirmSingleForQueueAsys",
         'method': 'POST',
         'headers': {
-                'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init',
-            },
+            'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init',
+        },
     },
     'getExtraInfo': {
         'url': r'https://kyfw.12306.cn/otn/confirmPassenger/initDc',
@@ -344,4 +344,3 @@ LOGIN_URL_MAPPING = {key: {key1: UrlMapping(v1) for key1, v1 in v.items()} for k
 QUERY_URL_MAPPING = UrlMapping(QUERY_URL)
 SUBMIT_URL_MAPPING = {key: {key1: UrlMapping(v1) for key1, v1 in v.items()} for key, v in SUBMIT_URLS.items()}
 FAST_SUBMIT_URL_MAPPING = {key: UrlMapping(v) for key, v in FAST_SUBMIT_URLS.items()}
-

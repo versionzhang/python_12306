@@ -29,9 +29,9 @@ class QueryPassengersData(object):
             else:
                 self.passengers.extend(json_response["data"]["datas"])
             p2_json_response = send_requests(LOGIN_SESSION,
-                                          PASSENGER_URL_MAPPING,
-                                          data={"pageIndex": 2,
-                                                "pageSize": 10})
+                                             PASSENGER_URL_MAPPING,
+                                             data={"pageIndex": 2,
+                                                   "pageSize": 10})
             status, msg = submit_response_checker(p2_json_response, ["status", "data.flag"], True)
             if not status:
                 self.passengers = []
@@ -45,7 +45,6 @@ class QueryPassengersData(object):
             return False
         Log.v("获取乘客信息成功")
         return True
-
 
     def filter_by_config(self):
         status = self.query()
