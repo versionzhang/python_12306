@@ -196,8 +196,9 @@ class NormalSubmitDcOrder(object):
     def _wait_for_order_id(self):
         # 排队逻辑
         t = datetime.datetime.now()
+        # 排队10分钟
         delta = datetime.timedelta(minutes=10)
-        while self.wait_time and self.wait_time >= 0:
+        while not self.order_id:
             loop_time = datetime.datetime.now()
             status, msg = self._query_order_wait_time()
             Log.v(msg)
@@ -205,10 +206,12 @@ class NormalSubmitDcOrder(object):
             if s:
                 self.break_submit, self.break_msg = False, data["msg"]
                 return self.break_submit, self.break_msg
+            # 5s 获取排队信息
             time.sleep(5)
             if self.order_id:
                 return True, "OK"
             if loop_time > t + delta:
+                BlackTrains.add_train(self.train)
                 return False, "提交超时"
         return False, "排队失败"
 
