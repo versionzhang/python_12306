@@ -8,17 +8,17 @@ from utils.log import Log
 EMAIL_MESSAGES = {
     1:
         {
-            "subject": "测试", "content": "this is a test email"
+            "subject": "测试", "content": "<h1>this is a test email</h1>"
         },
     2:
         {
-            "subject": "抢票成功通知 - python12306小助手",
+            "subject": "抢票成功通知-python12306小助手",
             "content":
                 """
-你的火车票已经订票成功，订单号为{order_no}, 请登录你的12306账号进行查看并付款.
-    
---- by python12306 小助手
---- github仓库链接 https://github.com/versionzhang/python_12306
+<h1>你的火车票已经订票成功，订单号为{order_no}, 请登录你的12306账号进行查看并付款.</h1>
+    <div>{ticket_info}</div>
+<p>--- by python12306 小助手</p>
+<p>Powered By <a href="https://github.com/versionzhang/python_12306">Python12306</a></p>
 """
         }
 }
@@ -46,7 +46,7 @@ def send_email(msg_type, **extra_var):
             port = email_conf.port
             s = data["content"].format(**extra_var)
 
-            msg = MIMEText(s, 'plain', 'utf-8')
+            msg = MIMEText(s, 'html', 'utf-8')
             msg['Subject'] = Header(subject, 'utf-8')
             msg['From'] = sender
             msg['To'] = ','.join(receiver)

@@ -7,8 +7,9 @@ import urllib.parse
 from config import Config
 from global_data.const_data import find_by_name, find_by_phrase
 from global_data.session import LOGIN_SESSION
-from global_data.url_conf import SUBMIT_URL_MAPPING
+from global_data.url_conf import SUBMIT_URL_MAPPING, ORDER_NO_COMPLETE_MAPPING
 from logic.login.passager import QueryPassengerTool
+from utils.data_structure import NotCompleteOrderTicketsDetail
 from utils.log import Log
 from utils.lookup import build_passenger_ticket_string, build_oldpassenger_ticket_string, BlackTrains
 from utils.net import send_requests, submit_response_checker
@@ -225,6 +226,18 @@ class NormalSubmitDcOrder(object):
         json_response = send_requests(LOGIN_SESSION, self.URLS['resultOrderForQueue'], params=params)
         status, msg = submit_response_checker(json_response, ["status", "data.submitStatus"], True, "订单已经成功提交")
         return status, msg
+
+    @staticmethod
+    def query_no_complete_order():
+        data = {"_json_att": ''}
+        json_response = send_requests(LOGIN_SESSION, ORDER_NO_COMPLETE_MAPPING, data=data)
+        status, msg = submit_response_checker(json_response, ["status"], True)
+        if status:
+            try:
+                return [NotCompleteOrderTicketsDetail(v) for v in json_response["data"]["orderDBList"][0]["tickets"]]
+            except KeyError:
+                return []
+        return []
 
     def run(self):
         while self.retry_time:

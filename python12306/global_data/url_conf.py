@@ -337,10 +337,19 @@ USER_CHECK_URL = {
     }
 }
 
+ORDER_NO_COMPLETE_URL = {
+    'url': r'https://kyfw.12306.cn/otn/queryOrder/queryMyOrderNoComplete',
+    'method': 'POST',
+    'headers': {
+        'Referer': r'https://kyfw.12306.cn/otn/view/train_order.html'
+    }
+}
+
+
 USER_CHECK_URL_MAPPING = UrlMapping(USER_CHECK_URL)
 PASSENGER_URL_MAPPING = UrlMapping(PASSENGER_URL)
-
 LOGIN_URL_MAPPING = {key: {key1: UrlMapping(v1) for key1, v1 in v.items()} for key, v in LOGIN_URLS.items()}
 QUERY_URL_MAPPING = UrlMapping(QUERY_URL)
 SUBMIT_URL_MAPPING = {key: {key1: UrlMapping(v1) for key1, v1 in v.items()} for key, v in SUBMIT_URLS.items()}
 FAST_SUBMIT_URL_MAPPING = {key: UrlMapping(v) for key, v in FAST_SUBMIT_URLS.items()}
+ORDER_NO_COMPLETE_MAPPING = UrlMapping(ORDER_NO_COMPLETE_URL)

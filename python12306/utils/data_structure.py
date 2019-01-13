@@ -1,3 +1,6 @@
+from prettytable import PrettyTable
+
+
 class BasicMapping(object):
     def __init__(self, data):
         for attr, v in data.items():
@@ -242,3 +245,51 @@ class PassengerDetail(BasicMapping):
                  "recordCount", "total_times"
                  )
 
+
+OrderTicketsMapping = [
+    ("stationTrainDTO", "乘车信息"),
+    ("passengerDTO", "乘客信息"),
+    ("sequence_no", "订单号"),
+    ("coach_name", "车厢"),
+    ("seat_name", "座位"),
+    ("seat_type_name", "席位"),
+    ("ticket_type_name", "票种"),
+    ("reserve_time", "下单时间"),
+    ("pay_limit_time", "截止时间"),
+    ("ticket_status_name", "车票状态"),
+    ("start_train_date_page", "开车时间"),
+    ("str_ticket_price_page", "票价"),
+]
+
+
+class NotCompleteOrderTicketsDetail(object):
+    __slots__ = tuple([v[0] for v in OrderTicketsMapping])
+
+    def __init__(self, data):
+        for v in self.__slots__:
+            if v == "stationTrainDTO":
+                setattr(self, v, "从 {0} 到 {1} 出发 {2} 到 {3} 旅程共 {4}公里".format(
+                    data[v]["from_station_name"],
+                    data[v]["to_station_name"],
+                    data[v]["start_time"].split(" ")[1],
+                    data[v]["arrive_time"].split(" ")[1],
+                    data[v]["distance"]
+                ))
+            elif v == "passengerDTO":
+                setattr(self, v, data[v]["passenger_name"])
+            else:
+                setattr(self, v, data[v])
+
+    def to_html(self):
+        table = PrettyTable()
+        table.field_names = [dict(OrderTicketsMapping).get(v) for v in self.__slots__]
+        table.add_row([getattr(self, v) for v in self.__slots__])
+        return table.get_html_string()
+
+    def __str__(self):
+        table = PrettyTable()
+        table.field_names = [dict(OrderTicketsMapping).get(v) for v in self.__slots__]
+        table.add_row([getattr(self, v) for v in self.__slots__])
+        return table.__str__()
+
+    __repr__ = __str__

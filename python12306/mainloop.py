@@ -18,7 +18,7 @@ from pre_processing.cities import CityData
 class Schedule(object):
     retry_login_time = Config.basic_config.retry_login_time
     order_id = ''
-    query_mode = 'normal'  # presale or normal
+    order_tickets = []
 
     def login(self):
         count = 0
@@ -134,6 +134,7 @@ class Schedule(object):
                 continue
             else:
                 self.order_id = submit.order_id
+                self.order_tickets = submit.query_no_complete_order()
                 break
 
     def run(self):
@@ -175,8 +176,12 @@ class Schedule(object):
             if self.order_id:
                 break
         Log.v("抢票成功，如果有配置邮箱，稍后会收到邮件通知")
+        Log.v("车票信息：")
+        for order_ticket in self.order_tickets:
+            print(order_ticket)
+
         # 抢票成功发邮件信息
-        send_email(2, **{"order_no": self.order_id})
+        send_email(2, **{"order_no": self.order_id, "ticket_info": "</br>".join([v.get_html_string() for v in self.order_tickets])})
 
 
 if __name__ == "__main__":
