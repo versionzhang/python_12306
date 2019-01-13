@@ -83,7 +83,7 @@ class QueryFilter(object):
         for v in self.result:
             flag = BlackTrains.check(v[1].sys_train_no.value)
             if flag:
-                Log.v("将 {0} 加入小黑屋".format(v[1].sys_train_no.value))
+                Log.v("{0} 车次已经在小黑屋".format(v[1].stationTrainCode.value))
             else:
                 result.append(copy.copy(v))
         return result

@@ -11,6 +11,7 @@ from logic.submit.fastsubmit import FastSubmitDcOrder
 from logic.submit.submit import NormalSubmitDcOrder
 from utils.send_email import send_email
 from utils.log import Log
+from pre_processing.cities import CityData
 
 
 class Schedule(object):
@@ -121,6 +122,19 @@ class Schedule(object):
         if now < morning_time:
             return morning_time - now
 
+    def submit_order(self, data):
+        for v in data:
+            if Config.basic_config.fast_submit:
+                submit = FastSubmitDcOrder(v[1], v[0])
+            else:
+                submit = NormalSubmitDcOrder(v[1], v[0])
+            f = submit.run()
+            if not f:
+                continue
+            else:
+                self.order_id = submit.order_id
+                break
+
     def run(self):
         self.login()
         p_status = self.query_passengers()
@@ -145,6 +159,7 @@ class Schedule(object):
                 status, msg = self.online_checker()
                 Log.v(msg)
             count += 1
+            Log.v("查询第 {0} 次".format(count))
             n = datetime.datetime.now()
             q = Query(Config.basic_config.travel_dates)
             data = q.filter()
@@ -165,20 +180,10 @@ class Schedule(object):
             time.sleep(delta)
             Log.v("查询第 {0} 次, 当次查询时间间隔为 {1:.3} 秒, 查询请求处理时间 {2:.3} 秒".format(
                 count, delta, delta_time.total_seconds()))
-            for v in data:
-                if Config.basic_config.fast_submit:
-                    submit = FastSubmitDcOrder(v[1], v[0])
-                else:
-                    submit = NormalSubmitDcOrder(v[1], v[0])
-                f = submit.run()
-                if not f:
-                    continue
-                else:
-                    self.order_id = submit.order_id
-                    break
+
+            self.submit_order(data)
             if self.order_id:
                 break
-
         Log.v("抢票成功，如果有配置邮箱，稍后会收到邮件通知")
         # 抢票成功发邮件信息
         send_email(2, **{"order_no": self.order_id})

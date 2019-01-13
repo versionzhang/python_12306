@@ -230,6 +230,7 @@ class NormalSubmitDcOrder(object):
         while self.retry_time:
             for v in NORMAL_PIPELINE:
                 status, msg = getattr(self, v)()
+                time.sleep(0.8)
                 if self.break_submit:
                     self.retry_time = 0
                     Log.v(self.break_msg)

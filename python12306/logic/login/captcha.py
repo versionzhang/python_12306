@@ -47,10 +47,16 @@ class RClient(object):
         }
         params.update(self.base_params)
         files = {'image': ('a.jpg', im_string)}
-        r = requests.post('http://api.ruokuai.com/create.json', data=params, files=files, headers=self.headers)
-        #
-        Log.v("使用若快进行验证码识别")
-        data = r.json()
+        while True:
+            try:
+                r = requests.post('http://api.ruokuai.com/create.json', data=params, files=files, headers=self.headers)
+                #
+                Log.v("使用若快进行验证码识别")
+                data = r.json()
+                break
+            except requests.RequestException:
+                Log.w("提交若快打码请求出现问题， 正在重试中...")
+                continue
         Log.d(data)
         return data
 

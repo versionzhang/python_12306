@@ -16,13 +16,18 @@ def send_captcha_requests(session, urlmapping_obj, params=None, data=None, **kwa
         format result data.
     """
     session.headers.update(urlmapping_obj.headers)
-    response = session.request(method=urlmapping_obj.method,
-                               url=urlmapping_obj.url,
-                               params=params,
-                               data=data,
-                               timeout=10,
-                               # allow_redirects=False,
-                               **kwargs)
+    try:
+        response = session.request(method=urlmapping_obj.method,
+                                   url=urlmapping_obj.url,
+                                   params=params,
+                                   data=data,
+                                   timeout=10,
+                                   # allow_redirects=False,
+                                   **kwargs)
+    except requests.RequestException as e:
+        Log.w(e)
+        Log.w("请求{0}异常 ".format(urlmapping_obj.url))
+        raise ResponseError
     Log.d(urlmapping_obj.url)
     if response.status_code == requests.codes.ok:
         if 'xhtml+xml' in response.headers['Content-Type']:
@@ -54,13 +59,18 @@ def get_captcha_image(session, urlmapping_obj, params=None, data=None, **kwargs)
         format result data.
     """
     session.headers.update(urlmapping_obj.headers)
-    response = session.request(method=urlmapping_obj.method,
-                               url=urlmapping_obj.url,
-                               params=params,
-                               data=data,
-                               timeout=10,
-                               # allow_redirects=False,
-                               **kwargs)
+    try:
+        response = session.request(method=urlmapping_obj.method,
+                                   url=urlmapping_obj.url,
+                                   params=params,
+                                   data=data,
+                                   timeout=10,
+                                   # allow_redirects=False,
+                                   **kwargs)
+    except requests.RequestException as e:
+        Log.w(e)
+        Log.w("请求{0}异常 ".format(urlmapping_obj.url))
+        raise ResponseError
     if response.status_code == requests.codes.ok:
         if 'xhtml+xml' in response.headers['Content-Type']:
             data = response.text
@@ -91,13 +101,18 @@ def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
         session.headers.pop("Content-Type", None)
     try:
         Log.d("请求 url {url}".format(url=urlmapping_obj.url))
-        response = session.request(method=urlmapping_obj.method,
-                                   url=urlmapping_obj.url,
-                                   params=params,
-                                   data=data,
-                                   timeout=10,
-                                   # allow_redirects=False,
-                                   **kwargs)
+        try:
+            response = session.request(method=urlmapping_obj.method,
+                                       url=urlmapping_obj.url,
+                                       params=params,
+                                       data=data,
+                                       timeout=10,
+                                       # allow_redirects=False,
+                                       **kwargs)
+        except requests.RequestException as e:
+            Log.w(e)
+            Log.w("请求{0}异常 ".format(urlmapping_obj.url))
+            raise ResponseError
         if params:
             Log.d("{url} Get 参数 {data}".format(url=urlmapping_obj.url,
                                                data=params))
