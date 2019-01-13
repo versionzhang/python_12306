@@ -5,6 +5,7 @@ import time
 from logic.login.checkuser import OnlineCheckerTool
 from logic.login.login import NormalLogin
 from logic.login.passager import QueryPassengerTool
+from logic.query.dispatcher import DispatcherTool
 from logic.query.query import Query
 from config import Config
 from logic.submit.fastsubmit import FastSubmitDcOrder
@@ -158,30 +159,19 @@ class Schedule(object):
             if Config.auto_code_enable:
                 status, msg = self.online_checker()
                 Log.v(msg)
+
             count += 1
-            Log.v("查询第 {0} 次".format(count))
-            n = datetime.datetime.now()
-            q = Query(Config.basic_config.travel_dates)
-            data = q.filter()
 
-            if not data:
-                Log.v("满足条件的车次暂无余票, 正在重新查询")
-
-            for v in data:
-                print("\t\t\t当前座位席别 {}".format(v[0].name))
-                q.pretty_output(v[1])
-
-            delta_time = datetime.datetime.now() - n
-
-            try:
-                delta = Config.basic_config.query_left_ticket_time - 1 + random.random()
-            except AttributeError:
-                delta = 4 + random.random()
-            time.sleep(delta)
-            Log.v("查询第 {0} 次, 当次查询时间间隔为 {1:.3} 秒, 查询请求处理时间 {2:.3} 秒".format(
-                count, delta, delta_time.total_seconds()))
-
-            self.submit_order(data)
+            dates = DispatcherTool.query_travel_dates
+            for query_date in dates:
+                Log.v("查询第 {0} 次".format(count))
+                n = datetime.datetime.now()
+                data = DispatcherTool.run(query_date)
+                count += 1
+                self.submit_order(data)
+                DispatcherTool.output_delta_time(n)
+                if self.order_id:
+                    break
             if self.order_id:
                 break
         Log.v("抢票成功，如果有配置邮箱，稍后会收到邮件通知")

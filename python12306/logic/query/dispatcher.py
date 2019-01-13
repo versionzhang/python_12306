@@ -55,6 +55,7 @@ class Dispatcher(object):
             f = lambda x: x - now <= self.delta_stop_time and now - x <= self.delta_continue_time
             result = any(filter(f, open_times))
             if result:
+                Log.v("当前处于预售模式，不再处理正常模式下的日期查询")
                 return True
             finish = all(filter(lambda x: now > x + self.delta_continue_time, open_times))
             if finish:
@@ -68,30 +69,39 @@ class Dispatcher(object):
             return [Config.presale_config.travel_date]
         else:
             if self.pre_sale_end:
-                return Config.basic_config.travel_dates + [Config.presale_config.travel_date]
+                if Config.presale_config.travel_date not in Config.basic_config.travel_dates:
+                    return Config.basic_config.travel_dates + [Config.presale_config.travel_date]
+                else:
+                    return Config.basic_config.travel_dates
             else:
                 open_times = list(map(format_time, Config.presale_config.start_times))
                 if datetime.datetime.now() > min(open_times) + self.delta_continue_time:
-                    return Config.basic_config.travel_dates + [Config.presale_config.travel_date]
+                    if Config.presale_config.travel_date not in Config.basic_config.travel_dates:
+                        return Config.basic_config.travel_dates + [Config.presale_config.travel_date]
+                    else:
+                        return Config.basic_config.travel_dates
                 else:
                     return Config.basic_config.travel_dates
 
     def run(self, travel_date):
         n = datetime.datetime.now()
+        Log.v("当前查询日期为 {}".format(travel_date))
         q = Query(travel_date)
         data = q.filter()
         if not data:
-            Log.v("日期 {travel_date} 满足条件的车次暂无余票, 正在重新查询")
+            Log.v("日期 {0} 满足条件的车次暂无余票, 正在重新查询".format(travel_date))
 
         for v in data:
             print("\t\t\t当前座位席别 {}".format(v[0].name))
             q.pretty_output(v[1])
-        delta_time = datetime.datetime.now() - n
+        return data
+
+    def output_delta_time(self, query_time):
+        delta_time = datetime.datetime.now() - query_time
         delta = self.query_left_ticket_time
         time.sleep(delta)
         Log.v("当次查询时间间隔为 {0:.3} 秒, 查询请求处理时间 {1:.3} 秒".format(
             delta, delta_time.total_seconds()))
-        return data
 
 
 DispatcherTool = Dispatcher()
