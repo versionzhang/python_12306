@@ -3,8 +3,8 @@ Pillow
 PrettyTable
 colorama
 
-
 namedtupled
 PyYAML
 
+cached-property
 # ipython # for debug
