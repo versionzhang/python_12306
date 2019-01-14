@@ -18,6 +18,7 @@ from python12306.pre_processing.cities import CityData
 class Schedule(object):
     retry_login_time = Config.basic_config.retry_login_time
     order_id = ''
+    unfinished_order = False
     order_tickets = []
 
     def login(self):
@@ -131,7 +132,11 @@ class Schedule(object):
                 submit = NormalSubmitDcOrder(v[1], v[0])
             f = submit.run()
             if not f:
-                continue
+                if submit.unfinished_order:
+                    self.unfinished_order = submit.unfinished_order
+                    break
+                else:
+                    continue
             else:
                 self.order_id = submit.order_id
                 self.order_tickets = submit.query_no_complete_order()
@@ -169,17 +174,22 @@ class Schedule(object):
                 count += 1
                 self.submit_order(data)
                 DispatcherTool.output_delta_time(n)
-                if self.order_id:
+                if self.order_id or self.unfinished_order:
                     break
-            if self.order_id:
+            if self.order_id or self.unfinished_order:
                 break
-        Log.v("抢票成功，如果有配置邮箱，稍后会收到邮件通知")
-        Log.v("车票信息：")
-        for order_ticket in self.order_tickets:
-            print(order_ticket)
+        if self.order_id:
+            Log.v("抢票成功，如果有配置邮箱，稍后会收到邮件通知")
+            Log.v("车票信息：")
+            for order_ticket in self.order_tickets:
+                print(order_ticket)
 
-        # 抢票成功发邮件信息
-        send_email(2, **{"order_no": self.order_id, "ticket_info": "</br>".join([v.to_html() for v in self.order_tickets])})
+            # 抢票成功发邮件信息
+            send_email(2, **{"order_no": self.order_id, "ticket_info": "</br>".join([v.to_html() for v in self.order_tickets])})
+        else:
+            Log.v("您有未完成订单, 请及时处理后再运行程序")
+            send_email(3)
+
 
 def main():
     instance = Schedule()

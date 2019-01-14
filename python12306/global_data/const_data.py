@@ -85,6 +85,8 @@ SUBMIT_ERR_MESSAGES_LIST = [
     {"msg": "存在与本次购票行程冲突的车票"}
 ]
 
+ORDER_NOT_FINISHED_MESSAGE = {"msg": "您还有未处理的订单"}
+
 TourTypeList = [TourMapping(v) for v in TOUR_DATA]
 SeatTypeList = [SeatMapping(v) for v in SEAT_DATA]
 TicketTypeList = [TicketMapping(v) for v in TICKET_DATA]

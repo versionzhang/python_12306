@@ -20,6 +20,16 @@ EMAIL_MESSAGES = {
 <p>--- by python12306 小助手</p>
 <p>Powered By <a href="https://github.com/versionzhang/python_12306">Python12306</a></p>
 """
+        },
+    3:
+        {
+            "subject": "您有未完成的订单,请处理后再运行本程序-python12306小助手",
+            "content":
+                """
+<h1>您有未完成的订单,请处理后再运行本程序.</h1>
+<p>--- by python12306 小助手</p>
+<p>Powered By <a href="https://github.com/versionzhang/python_12306">Python12306</a></p>
+"""
         }
 }
 

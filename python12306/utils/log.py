@@ -17,7 +17,11 @@ formatter = logging.Formatter(
 
 # first create log dir
 LOG_DIR = os.path.join(os.getcwd(), 'logs')
-os.makedirs(LOG_DIR)
+
+try:
+    os.makedirs(LOG_DIR)
+except FileExistsError:
+    pass
 
 handler = logging.handlers.RotatingFileHandler(
     os.path.join(LOG_DIR,
