@@ -1,8 +1,8 @@
 import datetime
 
-from global_data.session import LOGIN_SESSION
-from global_data.url_conf import USER_CHECK_URL_MAPPING
-from utils.net import send_requests, submit_response_checker
+from python12306.global_data.session import LOGIN_SESSION
+from python12306.global_data.url_conf import USER_CHECK_URL_MAPPING
+from python12306.utils.net import send_requests, submit_response_checker
 
 
 class OnlineChecker(object):

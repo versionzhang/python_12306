@@ -4,7 +4,7 @@ import logging.handlers
 
 from colorama import Fore
 
-from config import Config
+from python12306.config import Config
 
 logger = logging.getLogger()
 ticket_logger = logging.getLogger('ticket')
@@ -14,9 +14,14 @@ formatter = logging.Formatter(
 )
 
 # Add the log message handler to the logger
+
+# first create log dir
+LOG_DIR = os.path.join(os.getcwd(), 'logs')
+os.makedirs(LOG_DIR)
+
 handler = logging.handlers.RotatingFileHandler(
-    os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                 '../logs/buy_ticket-{0}.log'.format(
+    os.path.join(LOG_DIR,
+                 'buy_ticket-{0}.log'.format(
                      datetime.datetime.now().strftime("%Y-%m-%d-%H-%M"))),
     maxBytes=20 * 1024 * 1024, backupCount=5)
 handler.setFormatter(formatter)

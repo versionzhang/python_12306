@@ -3,17 +3,17 @@ from itertools import chain
 
 from prettytable import PrettyTable
 
-from config import Config
-from global_data.const_data import find_by_name, find_by_names
-from global_data.url_conf import QUERY_URL_MAPPING
-from pre_processing.cities import CityData
-from utils.log import Log
+from python12306.config import Config
+from python12306.global_data.const_data import find_by_name, find_by_names
+from python12306.global_data.url_conf import QUERY_URL_MAPPING
+from python12306.pre_processing.cities import CityData
+from python12306.utils.log import Log
 
-from global_data.session import LOGIN_SESSION
-from utils.lookup import BlackTrains
-from utils.net import send_requests
+from python12306.global_data.session import LOGIN_SESSION
+from python12306.utils.lookup import BlackTrains
+from python12306.utils.net import send_requests
 
-from utils.data_structure import TrainDetail
+from python12306.utils.data_structure import TrainDetail
 
 
 class Query(object):

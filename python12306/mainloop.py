@@ -2,17 +2,17 @@ import datetime
 import random
 import time
 
-from logic.login.checkuser import OnlineCheckerTool
-from logic.login.login import NormalLogin
-from logic.login.passager import QueryPassengerTool
-from logic.query.dispatcher import DispatcherTool
-from logic.query.query import Query
-from config import Config
-from logic.submit.fastsubmit import FastSubmitDcOrder
-from logic.submit.submit import NormalSubmitDcOrder
-from utils.send_email import send_email
-from utils.log import Log
-from pre_processing.cities import CityData
+from python12306.logic.login.checkuser import OnlineCheckerTool
+from python12306.logic.login.login import NormalLogin
+from python12306.logic.login.passager import QueryPassengerTool
+from python12306.logic.query.dispatcher import DispatcherTool
+from python12306.logic.query.query import Query
+from python12306.config import Config
+from python12306.logic.submit.fastsubmit import FastSubmitDcOrder
+from python12306.logic.submit.submit import NormalSubmitDcOrder
+from python12306.utils.send_email import send_email
+from python12306.utils.log import Log
+from python12306.pre_processing.cities import CityData
 
 
 class Schedule(object):
@@ -181,7 +181,10 @@ class Schedule(object):
         # 抢票成功发邮件信息
         send_email(2, **{"order_no": self.order_id, "ticket_info": "</br>".join([v.to_html() for v in self.order_tickets])})
 
-
-if __name__ == "__main__":
+def main():
     instance = Schedule()
     instance.run()
+
+if __name__ == "__main__":
+    main()
+

@@ -1,10 +1,10 @@
-from global_data.session import LOGIN_SESSION
+from python12306.global_data.session import LOGIN_SESSION
 
-from config import Config
-from global_data.url_conf import PASSENGER_URL_MAPPING
-from pre_processing.passengers import PassengerData
-from utils.log import Log
-from utils.net import send_requests, submit_response_checker
+from python12306.config import Config
+from python12306.global_data.url_conf import PASSENGER_URL_MAPPING
+from python12306.pre_processing.passengers import PassengerData
+from python12306.utils.log import Log
+from python12306.utils.net import send_requests, submit_response_checker
 
 
 class QueryPassengersData(object):

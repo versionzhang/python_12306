@@ -2,8 +2,8 @@ import smtplib
 from email.header import Header
 from email.mime.text import MIMEText
 
-from config import Config
-from utils.log import Log
+from python12306.config import Config
+from python12306.utils.log import Log
 
 EMAIL_MESSAGES = {
     1:

@@ -3,8 +3,9 @@ import re
 import requests
 from cached_property import cached_property
 
-from utils.data_structure import CityStationMapping
-from utils.log import Log
+from python12306.comonexception import ResponseError
+from python12306.utils.data_structure import CityStationMapping
+from python12306.utils.log import Log
 
 STATION_URL = "https://kyfw.12306.cn/otn/resources/js/framework/station_name.js"
 
@@ -18,7 +19,8 @@ class CityTool(object):
 
     @cached_property
     def raw_data(self):
-        while True:
+        count = 10
+        while count:
             try:
                 r = requests.get(STATION_URL)
                 if r.status_code == requests.codes.ok:
@@ -29,11 +31,15 @@ class CityTool(object):
                         Log.v("获取车站信息成功")
                         return list(filter(lambda x: bool(x), data))
                 else:
+                    count -= 1
                     Log.w("无法读取车站信息，重试中")
                     continue
             except requests.RequestException:
+                count -= 1
                 Log.w("获取车站信息失败，重试获取中")
                 continue
+        if count <= 0:
+            raise ResponseError
 
     def to_python(self):
         data = self.raw_data

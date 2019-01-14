@@ -6,15 +6,15 @@ from PIL import Image
 import requests
 from hashlib import md5
 
-from comonexception import ResponseCodeError, ResponseError
-from global_data.session import LOGIN_SESSION
-from global_data.url_conf import LOGIN_URL_MAPPING
-from global_data.useragent import CHROME_USER_AGENT
+from python12306.comonexception import ResponseCodeError, ResponseError
+from python12306.global_data.session import LOGIN_SESSION
+from python12306.global_data.url_conf import LOGIN_URL_MAPPING
+from python12306.global_data.useragent import CHROME_USER_AGENT
 
-from config import Config
-from utils.log import Log
+from python12306.config import Config
+from python12306.utils.log import Log
 
-from utils.net import send_requests, json_status, send_captcha_requests, get_captcha_image
+from python12306.utils.net import send_requests, json_status, send_captcha_requests, get_captcha_image
 
 
 class RClient(object):

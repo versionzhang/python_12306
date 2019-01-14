@@ -1,4 +1,4 @@
-from utils.data_structure import TourMapping, SeatMapping, TicketMapping
+from python12306.utils.data_structure import TourMapping, SeatMapping, TicketMapping
 
 TYPE_LOGIN_NORMAL_WAY = 0
 TYPE_LOGIN_OTHER_WAY = 1

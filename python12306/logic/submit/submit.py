@@ -4,15 +4,15 @@ import re
 import time
 import urllib.parse
 
-from config import Config
-from global_data.const_data import find_by_name, find_by_phrase
-from global_data.session import LOGIN_SESSION
-from global_data.url_conf import SUBMIT_URL_MAPPING, ORDER_NO_COMPLETE_MAPPING
-from logic.login.passager import QueryPassengerTool
-from utils.data_structure import NotCompleteOrderTicketsDetail
-from utils.log import Log
-from utils.lookup import build_passenger_ticket_string, build_oldpassenger_ticket_string, BlackTrains
-from utils.net import send_requests, submit_response_checker
+from python12306.config import Config
+from python12306.global_data.const_data import find_by_name, find_by_phrase
+from python12306.global_data.session import LOGIN_SESSION
+from python12306.global_data.url_conf import SUBMIT_URL_MAPPING, ORDER_NO_COMPLETE_MAPPING
+from python12306.logic.login.passager import QueryPassengerTool
+from python12306.utils.data_structure import NotCompleteOrderTicketsDetail
+from python12306.utils.log import Log
+from python12306.utils.lookup import build_passenger_ticket_string, build_oldpassenger_ticket_string, BlackTrains
+from python12306.utils.net import send_requests, submit_response_checker
 
 NORMAL_PIPELINE = [
     "_submit_order_request",

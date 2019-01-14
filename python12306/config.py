@@ -8,7 +8,7 @@ def parsing_config():
     解析yaml
     :return: s  字典
     """
-    path = os.path.join(os.path.dirname(__file__), 'config.yaml')
+    path = os.path.join(os.getcwd(), 'config.yaml')
     with open(path, 'r', encoding='utf-8') as f:
         s = yaml.load(f)
     return s

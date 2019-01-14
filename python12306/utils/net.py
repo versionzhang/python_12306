@@ -2,8 +2,8 @@ import copy
 import xml.etree.ElementTree as ET
 import requests
 
-from comonexception import ResponseError, ResponseCodeError
-from utils.log import Log
+from python12306.comonexception import ResponseError, ResponseCodeError
+from python12306.utils.log import Log
 
 
 def send_captcha_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
