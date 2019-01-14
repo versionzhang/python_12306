@@ -181,7 +181,7 @@ class Schedule(object):
             print(order_ticket)
 
         # 抢票成功发邮件信息
-        send_email(2, **{"order_no": self.order_id, "ticket_info": "</br>".join([v.get_html_string() for v in self.order_tickets])})
+        send_email(2, **{"order_no": self.order_id, "ticket_info": "</br>".join([v.to_html() for v in self.order_tickets])})
 
 
 if __name__ == "__main__":

@@ -57,10 +57,11 @@ class Dispatcher(object):
             if result:
                 Log.v("当前处于预售模式，不再处理正常模式下的日期查询")
                 return True
-            finish = all(filter(lambda x: now > x + self.delta_continue_time, open_times))
-            if finish:
+            check_result = list(filter(lambda x: now > x + self.delta_continue_time, open_times))
+            if check_result and all(check_result):
                 self.pre_sale_end = True
                 return False
+        return False
 
     @property
     def query_travel_dates(self):
@@ -69,14 +70,14 @@ class Dispatcher(object):
             return [Config.presale_config.travel_date]
         else:
             if self.pre_sale_end:
-                if Config.presale_config.travel_date not in Config.basic_config.travel_dates:
+                if Config.presale_enable and Config.presale_config.travel_date not in Config.basic_config.travel_dates:
                     return Config.basic_config.travel_dates + [Config.presale_config.travel_date]
                 else:
                     return Config.basic_config.travel_dates
             else:
                 open_times = list(map(format_time, Config.presale_config.start_times))
                 if datetime.datetime.now() > min(open_times) + self.delta_continue_time:
-                    if Config.presale_config.travel_date not in Config.basic_config.travel_dates:
+                    if Config.presale_enable and Config.presale_config.travel_date not in Config.basic_config.travel_dates:
                         return Config.basic_config.travel_dates + [Config.presale_config.travel_date]
                     else:
                         return Config.basic_config.travel_dates
@@ -84,7 +85,6 @@ class Dispatcher(object):
                     return Config.basic_config.travel_dates
 
     def run(self, travel_date):
-        n = datetime.datetime.now()
         Log.v("当前查询日期为 {}".format(travel_date))
         q = Query(travel_date)
         data = q.filter()
