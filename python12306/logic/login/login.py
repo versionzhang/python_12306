@@ -49,7 +49,7 @@ class NormalLogin(object):
         json_response = send_requests(LOGIN_SESSION, self.URLS['login'], data=payload)
         result, msg = json_status(json_response, [], '0')
         if not result:
-            return False, msg
+            return False, json_response.get("result_message", None)
         self._passportredirect()
         result, msg, apptk = self._uamtk()
         if not result:

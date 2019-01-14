@@ -15,4 +15,3 @@ def parsing_config():
 
 
 Config = namedtupled.map(parsing_config())
-
