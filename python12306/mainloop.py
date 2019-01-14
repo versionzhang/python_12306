@@ -161,8 +161,6 @@ class Schedule(object):
                 status, msg = self.online_checker()
                 Log.v(msg)
 
-            count += 1
-
             dates = DispatcherTool.query_travel_dates
             for query_date in dates:
                 Log.v("查询第 {0} 次".format(count))
