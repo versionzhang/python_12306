@@ -3,15 +3,15 @@ import time
 from collections import OrderedDict
 from urllib.parse import unquote
 
-from config import Config
-from global_data.const_data import find_by_name
-from global_data.session import LOGIN_SESSION
-from global_data.url_conf import FAST_SUBMIT_URL_MAPPING
-from logic.login.passager import QueryPassengerTool
-from logic.submit.submit import NormalSubmitDcOrder
-from utils.log import Log
-from utils.lookup import build_passenger_ticket_string, build_oldpassenger_ticket_string, BlackTrains
-from utils.net import send_requests, submit_response_checker
+from python12306.config import Config
+from python12306.global_data.const_data import find_by_name
+from python12306.global_data.session import LOGIN_SESSION
+from python12306.global_data.url_conf import FAST_SUBMIT_URL_MAPPING
+from python12306.logic.login.passager import QueryPassengerTool
+from python12306.logic.submit.submit import NormalSubmitDcOrder
+from python12306.utils.log import Log
+from python12306.utils.lookup import build_passenger_ticket_string, build_oldpassenger_ticket_string, BlackTrains
+from python12306.utils.net import send_requests, submit_response_checker
 
 FAST_PIPELINE = [
     "_get_passenger_data",

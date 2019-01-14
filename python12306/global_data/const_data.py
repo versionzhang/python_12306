@@ -1,4 +1,4 @@
-from utils.data_structure import TourMapping, SeatMapping, TicketMapping
+from python12306.utils.data_structure import TourMapping, SeatMapping, TicketMapping
 
 TYPE_LOGIN_NORMAL_WAY = 0
 TYPE_LOGIN_OTHER_WAY = 1
@@ -84,6 +84,8 @@ SUBMIT_ERR_MESSAGES_LIST = [
     {"msg": "没有足够的票"},
     {"msg": "存在与本次购票行程冲突的车票"}
 ]
+
+ORDER_NOT_FINISHED_MESSAGE = {"msg": "您还有未处理的订单"}
 
 TourTypeList = [TourMapping(v) for v in TOUR_DATA]
 SeatTypeList = [SeatMapping(v) for v in SEAT_DATA]

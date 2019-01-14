@@ -2,8 +2,8 @@ import datetime
 import random
 import time
 
-from config import Config
-from utils.log import Log
+from python12306.config import Config
+from python12306.utils.log import Log
 from .query import Query
 
 

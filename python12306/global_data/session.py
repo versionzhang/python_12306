@@ -1,6 +1,6 @@
 import requests
 
-from global_data.useragent import CHROME_USER_AGENT
+from python12306.global_data.useragent import CHROME_USER_AGENT
 
 LOGIN_SESSION = requests.session()
 

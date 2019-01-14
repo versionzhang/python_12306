@@ -225,7 +225,7 @@ class TrainDetail(object):
                                         "verbose": v["verbose"],
                                         "display": v.get("display", True),
                                         "value": data[v["index"]]}))
-        from pre_processing.cities import CityData
+        from python12306.pre_processing.cities import CityData
         for v in APPEND_MAPPING:
             setattr(self, v["name"],
                     TrainProperty(data={"name": v["name"],
