@@ -49,7 +49,8 @@ class RClient(object):
         files = {'image': ('a.jpg', im_string)}
         while True:
             try:
-                r = requests.post('http://api.ruokuai.com/create.json', data=params, files=files, headers=self.headers)
+                r = requests.post('http://api.ruokuai.com/create.json',
+                                  data=params, files=files, headers=self.headers)
                 #
                 Log.v("使用若快进行验证码识别")
                 data = r.json()
@@ -122,7 +123,7 @@ class OtherCaptchaUtil(object):
             return response['status'] and self.success_code == response['data']['result']
 
         v = verify(json_response)
-        return v, "Error" if not v else v, "ok"
+        return v, "Error" if not v else v
 
 
 class Captcha(object):
@@ -146,7 +147,8 @@ class Captcha(object):
 
     @staticmethod
     def trans_captcha_results(indexes, sep=r','):
-        coordinates = ['40,40', '110,40', '180,40', '250,40', '40,110', '110,110', '180,110', '250,110']
+        coordinates = ['40,40', '110,40', '180,40', '250,40',
+                       '40,110', '110,110', '180,110', '250,110']
         results = []
         for index in indexes.split(sep=sep):
             results.append(coordinates[int(index)])
@@ -179,14 +181,15 @@ class Captcha(object):
             return self.check(trans)
         else:
             if "Error" in data and data["Error"]:
-                Log.e("打码平台错误: {0}, 请登录打码平台查看-http://www.ruokuai.com/client/index?6726".format(data["Error"]))
+                Log.e(
+                    "打码平台错误: {0}, 请登录打码平台查看-http://www.ruokuai.com/client/index?6726".format(data["Error"]))
                 return False, "若快打码平台错误"
 
     def verifyhandle_hand(self):
         img = Image.open(BytesIO(self.generator_image()))
         img.show()
         Log.v(
-            """ 
+            """
             -----------------
             | 0 | 1 | 2 | 3 |
             -----------------

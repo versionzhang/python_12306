@@ -28,6 +28,7 @@ class Schedule(object):
             status, msg = login_instance.login()
             if not status:
                 count += 1
+                Log.e(msg)
                 Log.v("登录失败, 重试{0}次".format(count))
                 continue
             else:
