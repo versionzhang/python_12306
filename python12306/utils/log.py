@@ -18,7 +18,7 @@ handler = logging.handlers.RotatingFileHandler(
     os.path.join(os.path.abspath(os.path.dirname(__file__)),
                  '../logs/buy_ticket-{0}.log'.format(
                      datetime.datetime.now().strftime("%Y-%m-%d-%H-%M"))),
-    maxBytes=20 * 1024 * 1024, backupCount=5)
+    maxBytes=20 * 1024 * 1024, backupCount=5, encoding='utf-8')
 handler.setFormatter(formatter)
 ticket_logger.addHandler(handler)
 
