@@ -81,7 +81,7 @@ class QueryFilter(object):
     def filter_black_trains(self):
         result = []
         for v in self.result:
-            flag = BlackTrains.check(v[1].sys_train_no.value)
+            flag = BlackTrains.check(v[1])
             if flag:
                 Log.v("{0} 车次已经在小黑屋".format(v[1].stationTrainCode.value))
             else:

@@ -32,14 +32,15 @@ class BlackTrainList(object):
         now = datetime.datetime.now()
         self.trains.append([now, train])
 
-    def check(self, train_no):
+    def check(self, train_obj):
         now = datetime.datetime.now()
         # 过滤掉已经过期的数据
         self.trains = list(
             filter(lambda x: datetime.timedelta(minutes=Config.basic_config.black_train_time) + x[0] > now,
                    self.trains))
         for v in self.trains:
-            if v[1].sys_train_no.value == train_no:
+            if v[1].sys_train_no.value == train_obj.sys_train_no.value and \
+                    v[1].train_date.value == train_obj.train_date.value:
                 return True
         return False
 
