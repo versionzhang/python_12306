@@ -136,7 +136,8 @@ class Schedule(object):
                 break
 
     def run(self):
-        self.login()
+        if not self.login():
+            return
         p_status = self.query_passengers()
         if not p_status:
             return
