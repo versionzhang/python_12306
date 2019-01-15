@@ -43,7 +43,7 @@ def send_email(msg_type, **extra_var):
             username = email_conf.username
             password = email_conf.password
             host = email_conf.email_gateway
-            port = email_conf.port
+            port = email_conf.email_port
             s = data["content"].format(**extra_var)
 
             msg = MIMEText(s, 'html', 'utf-8')
