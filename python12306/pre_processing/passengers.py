@@ -1,4 +1,4 @@
-from utils.data_structure import PassengerDetail
+from python12306.utils.data_structure import PassengerDetail
 
 
 class PassengerTool(object):

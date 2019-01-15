@@ -1,4 +1,5 @@
 import datetime
+import random
 import time
 
 from python12306.logic.login.checkuser import OnlineCheckerTool
@@ -22,14 +23,13 @@ class Schedule(object):
 
     def login(self):
         count = 0
-        while self.retry_login_time >= count:
+        while self.retry_login_time > count:
             login_instance = NormalLogin()
             Log.v("正在为您登录")
             status, msg = login_instance.login()
             if not status:
                 count += 1
-                Log.e(msg)
-                Log.v("登录失败, 重试{0}次".format(count)) if self.retry_login_time >= count else ""
+                Log.v("登录失败, 重试{0}次".format(count))
                 continue
             else:
                 Log.v("登录成功")
@@ -57,11 +57,15 @@ class Schedule(object):
         return status, msg
 
     def online_checker_now(self):
-        login_status, msg = OnlineCheckerTool.checker()
+        status, msg = OnlineCheckerTool.checker()
         OnlineCheckerTool.update_check_time()
-        while not login_status:
+        if not status:
             Log.v("用户登录失效, 正在为您重试登录")
             login_status = self.login()
+            if not login_status:
+                return False, "重试登录失败"
+        else:
+            return status, msg
 
     @staticmethod
     def query_passengers():
@@ -139,8 +143,7 @@ class Schedule(object):
                 break
 
     def run(self):
-        if not self.login():
-            return
+        self.login()
         p_status = self.query_passengers()
         if not p_status:
             return
@@ -155,16 +158,13 @@ class Schedule(object):
                 Log.v("12306系统每天 23:00 - 6:00 之间 维护中, 程序暂时停止运行")
                 maintain_time = self.delta_maintain_time()
                 Log.v("{0}小时 {1}分钟 {2}秒之后重新启动".format(
-                    maintain_time.seconds // 3600,
-                    (maintain_time.seconds // 60) % 60,
+                    maintain_time.seconds//3600,
+                    (maintain_time.seconds//60) % 60,
                     maintain_time.seconds % 3600 % 60))
                 time.sleep(self.delta_maintain_time().total_seconds())
             if Config.auto_code_enable:
                 status, msg = self.online_checker()
                 Log.v(msg)
-                if not status:
-                    Log.e("心跳登录失败，继续重试中，建议手动检查原因再尝试重启")
-                    self.online_checker_now()
 
             dates = DispatcherTool.query_travel_dates
             for query_date in dates:
@@ -178,17 +178,8 @@ class Schedule(object):
                     break
             if self.order_id or self.unfinished_order:
                 break
-
-        Log.v("车票信息：")
-        for order_ticket in self.order_tickets:
-            print(order_ticket)
-
-        # 抢票成功发邮件信息
-        send_email(2, **{"order_no": self.order_id,
-                         "ticket_info": "</br>".join([v.to_html() for v in self.order_tickets])})
         if self.order_id:
-            Log.v("抢票成功，{notice}".format(
-                notice="你已开启邮箱配置，稍后会收到邮件通知" if Config.email_notice_enable else "如需邮件通知请先配置"))
+            Log.v("抢票成功，如果有配置邮箱，稍后会收到邮件通知")
             Log.v("车票信息：")
             for order_ticket in self.order_tickets:
                 print(order_ticket)

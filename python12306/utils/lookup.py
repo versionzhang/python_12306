@@ -1,7 +1,7 @@
 import datetime
 
-from config import Config
-from global_data.const_data import find_by_name
+from python12306.config import Config
+from python12306.global_data.const_data import find_by_name
 
 
 def build_passenger_ticket_string(seat_type, passengers):

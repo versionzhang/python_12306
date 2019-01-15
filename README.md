@@ -13,6 +13,12 @@ Python 12306 抢票小工具
 
 **2019.1.14 dev分支完成了打包功能，使用说明参考下文**
 
+```
+使用命令 pip install git+https://github.com/versionzhang/python_12306@dev
+即可安装此项目，项目会生成py12306的命令
+在你需要运行的文件夹内创建config.yaml，编辑好配置文件即可使用
+```
+
 ## python版本支持
 
 3.5以上

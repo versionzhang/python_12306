@@ -4,15 +4,15 @@ import re
 import time
 import urllib.parse
 
-from config import Config
-from global_data.const_data import find_by_name, find_by_phrase
-from global_data.session import LOGIN_SESSION
-from global_data.url_conf import SUBMIT_URL_MAPPING, ORDER_NO_COMPLETE_MAPPING
-from logic.login.passager import QueryPassengerTool
-from utils.data_structure import NotCompleteOrderTicketsDetail
-from utils.log import Log
-from utils.lookup import build_passenger_ticket_string, build_oldpassenger_ticket_string, BlackTrains
-from utils.net import send_requests, submit_response_checker
+from python12306.config import Config
+from python12306.global_data.const_data import find_by_name, find_by_phrase, ORDER_NOT_FINISHED_MESSAGE
+from python12306.global_data.session import LOGIN_SESSION
+from python12306.global_data.url_conf import SUBMIT_URL_MAPPING, ORDER_NO_COMPLETE_MAPPING
+from python12306.logic.login.passager import QueryPassengerTool
+from python12306.utils.data_structure import NotCompleteOrderTicketsDetail
+from python12306.utils.log import Log
+from python12306.utils.lookup import build_passenger_ticket_string, build_oldpassenger_ticket_string, BlackTrains
+from python12306.utils.net import send_requests, submit_response_checker
 
 NORMAL_PIPELINE = [
     "_submit_order_request",
@@ -39,6 +39,7 @@ class NormalSubmitDcOrder(object):
     retry_time = 2
     break_submit = False
     break_msg = ''
+    unfinished_order = False
 
     def __init__(self, train_detail, seat_type):
         self.train = train_detail
@@ -68,8 +69,14 @@ class NormalSubmitDcOrder(object):
         }
         Log.v("请求预提交订单")
         json_response = send_requests(LOGIN_SESSION, self.URLS['submitOrderRequest'], data=form_data)
-        return submit_response_checker(json_response, ["status"], True,
+        status, msg = submit_response_checker(json_response, ["status"], True,
                                        "请求预提交订单成功")
+        if "messages" in json_response:
+            print(json_response["messages"])
+            print(''.join(json_response["messages"]))
+        if "messages" in json_response and ORDER_NOT_FINISHED_MESSAGE['msg'] in ''.join(json_response["messages"]):
+            self.unfinished_order = True
+        return status, msg
 
     def _get_submit_token(self):
         html = send_requests(LOGIN_SESSION, self.URLS['getExtraInfo'])
@@ -240,10 +247,10 @@ class NormalSubmitDcOrder(object):
         return []
 
     def run(self):
-        while self.retry_time:
+        while self.retry_time and not self.unfinished_order:
             for v in NORMAL_PIPELINE:
                 status, msg = getattr(self, v)()
-                time.sleep(0.8)
+                # time.sleep(0.8)
                 if self.break_submit:
                     self.retry_time = 0
                     Log.v(self.break_msg)
@@ -256,5 +263,8 @@ class NormalSubmitDcOrder(object):
                 Log.v("提交订单成功, 订单号为 {0}, 请登录12036在30分钟内完成支付".format(self.order_id))
                 return True
             Log.v("提交订单失败, 正在为你重试提交")
-        Log.v("重试已经超过设定次数, 提交失败, 重新查询余票")
+        if self.unfinished_order:
+            Log.v("您有未完成订单, 请及时后再运行程序")
+        else:
+            Log.v("重试已经超过设定次数, 提交失败, 重新查询余票")
         return False

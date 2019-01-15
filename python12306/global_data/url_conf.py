@@ -2,7 +2,7 @@
 import random
 import time
 
-from utils.data_structure import UrlMapping
+from python12306.utils.data_structure import UrlMapping
 
 LOGIN_URLS = {
     'normal': {

@@ -2,8 +2,8 @@ import smtplib
 from email.header import Header
 from email.mime.text import MIMEText
 
-from config import Config
-from utils.log import Log
+from python12306.config import Config
+from python12306.utils.log import Log
 
 EMAIL_MESSAGES = {
     1:
@@ -17,6 +17,16 @@ EMAIL_MESSAGES = {
                 """
 <h1>你的火车票已经订票成功，订单号为{order_no}, 请登录你的12306账号进行查看并付款.</h1>
     <div>{ticket_info}</div>
+<p>--- by python12306 小助手</p>
+<p>Powered By <a href="https://github.com/versionzhang/python_12306">Python12306</a></p>
+"""
+        },
+    3:
+        {
+            "subject": "您有未完成的订单,请处理后再运行本程序-python12306小助手",
+            "content":
+                """
+<h1>您有未完成的订单,请处理后再运行本程序.</h1>
 <p>--- by python12306 小助手</p>
 <p>Powered By <a href="https://github.com/versionzhang/python_12306">Python12306</a></p>
 """
