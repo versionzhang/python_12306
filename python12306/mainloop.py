@@ -34,7 +34,7 @@ class Schedule(object):
             else:
                 Log.v("登录成功")
                 break
-        if self.retry_login_time <= count:
+        if self.retry_login_time < count:
             Log.v("重试次数已经超过设置")
             return False
         return True
