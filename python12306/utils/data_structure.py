@@ -268,7 +268,8 @@ class NotCompleteOrderTicketsDetail(object):
     def __init__(self, data):
         for v in self.__slots__:
             if v == "stationTrainDTO":
-                setattr(self, v, "从 {0} 到 {1} 出发 {2} 到 {3} 旅程共 {4}公里".format(
+                setattr(self, v, "车次{0}从{1}到{2}出发{3}到{4}旅程共{5}公里".format(
+                    data[v]['station_train_code'],
                     data[v]["from_station_name"],
                     data[v]["to_station_name"],
                     data[v]["start_time"].split(" ")[1],
