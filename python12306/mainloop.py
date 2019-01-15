@@ -19,14 +19,14 @@ class Schedule(object):
 
     def login(self):
         count = 0
-        while self.retry_login_time > count:
+        while self.retry_login_time >= count:
             login_instance = NormalLogin()
             Log.v("正在为您登录")
             status, msg = login_instance.login()
             if not status:
                 count += 1
                 Log.e(msg)
-                Log.v("登录失败, 重试{0}次".format(count))
+                Log.v("登录失败, 重试{0}次".format(count)) if self.retry_login_time >= count else ""
                 continue
             else:
                 Log.v("登录成功")
