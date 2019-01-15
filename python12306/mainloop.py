@@ -54,15 +54,11 @@ class Schedule(object):
         return status, msg
 
     def online_checker_now(self):
-        status, msg = OnlineCheckerTool.checker()
+        login_status, msg = OnlineCheckerTool.checker()
         OnlineCheckerTool.update_check_time()
-        if not status:
+        while not login_status:
             Log.v("用户登录失效, 正在为您重试登录")
             login_status = self.login()
-            if not login_status:
-                return False, "重试登录失败"
-        else:
-            return status, msg
 
     @staticmethod
     def query_passengers():
@@ -159,6 +155,9 @@ class Schedule(object):
             if Config.auto_code_enable:
                 status, msg = self.online_checker()
                 Log.v(msg)
+                if not status:
+                    Log.e("心跳登录失败，继续重试中，建议手动检查原因再尝试重启")
+                    self.online_checker_now()
 
             dates = DispatcherTool.query_travel_dates
             for query_date in dates:
