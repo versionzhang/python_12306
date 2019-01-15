@@ -42,9 +42,7 @@ class FastSubmitDcOrder(NormalSubmitDcOrder):
 
     def _auto_submit_order_request(self):
         """
-        # response example. for debug.
-            {'validateMessagesShowId': '_validatorMessage', 'status': True, 'httpstatus': 200, 'data': {'result': 'QX#F7F13745AA1C7631B9C6B204C3677E3E1B654BE1111F558326BFED9D#hcc983%2Bc27menDVKU5ja2C2Q1%2FbToZXgLI1l8950QBZxtWwE#1', 'ifShowPassCode': 'N', 'canChooseBeds': 'N', 'canChooseSeats': 'Y', 'choose_Seats': 'M9', 'isCanChooseMid': 'N', 'ifShowPassCodeTime': '2985', 'submitStatus': True, 'smokeStr': ''}, 'messages': [], 'validateMessages': {}}
-        :return:
+        :return: status, msg
         """
         data = OrderedDict()
         data["secretStr"] = self.decode_secret_str(self.train.secretStr.value)
@@ -119,7 +117,7 @@ class FastSubmitDcOrder(NormalSubmitDcOrder):
         delta = datetime.timedelta(minutes=10)
         while self.wait_time and self.wait_time >= 0:
             loop_time = datetime.datetime.now()
-            status, msg = self._query_order_wait_time()
+            self._query_order_wait_time()
             time.sleep(5)
             if self.order_id:
                 return True, "OK"

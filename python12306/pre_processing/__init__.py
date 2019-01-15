@@ -1,2 +1,3 @@
 # parsing some data.
-# 1. citys data and save citys data to redis.
+# 1. 获取车站信息
+# 2. 获取乘客信息

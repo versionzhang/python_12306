@@ -70,7 +70,7 @@ class NormalSubmitDcOrder(object):
         Log.v("请求预提交订单")
         json_response = send_requests(LOGIN_SESSION, self.URLS['submitOrderRequest'], data=form_data)
         status, msg = submit_response_checker(json_response, ["status"], True,
-                                       "请求预提交订单成功")
+                                              "请求预提交订单成功")
         if "messages" in json_response:
             print(json_response["messages"])
             print(''.join(json_response["messages"]))
