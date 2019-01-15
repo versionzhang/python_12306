@@ -1,0 +1,129 @@
+---
+# 预售模式工作流程,在开启的情况下,在查询当天在配置的时间点附近进行预售查询,在配置的时间范围之外
+# 仍然是正常查询
+# 预售模式: 预售模式为抢票模式, 在抢票模式下的查询时间间隔可以配置的低一点, True or False
+presale_enable: True
+presale_config:
+  # 预售日期, 单日期,与正常模式的配置不同,请注意
+  travel_date: "2019-02-18"
+
+  # 预售模式下查询余票时间间隔 单位秒
+  query_left_ticket_time: 1
+  # 预售模式下提前多久停止正常模式的查询只查询预售模式的日期的票, 单位分钟
+  stop_time: 2
+  # 预售模式下持续时间,过了持续时间之后,变为正常查询,按照正常查询的模式, 单位分钟
+  continue_time: 15
+  # 预售时间点, 可以为多个, 格式如下所示
+  # "%H:%M" 小时:分钟
+  start_times:
+    - "10:00"
+    - "12:00"
+
+basic_config:
+  # 快速下单接口, True or False, 目前12306的web端使用的是正常下单接口,快速下单是从
+  # testerSunshine 12306的流程中拿到的,测试过程中发现有时候会出票失败, 暂时正常下单流程是稳定的
+  fast_submit: False
+  # 调试模式, True or False, True为调试模式,终端会输出调试信息,False为正常模式,只显示必要信息
+  debug: False
+
+  # 出发日期(list)，格式ex：
+    # - 2019-01-26
+    # - 2019-01-27
+  travel_dates:
+    # 已经更新为多日期
+    - "2019-01-27"
+
+  ticket_type:
+    # 目前取值有两种
+    # 成人票或者学生票
+    # 暂时未考虑学生票和成人票混合的情况
+    "成人票"
+
+  # 是否根据时间范围 和 乘车类型 购票
+  # 否则将需要手动填写车次
+  manual_trainnum_enable: False
+
+  # 列车类型: 高铁 G 动车 D 普快K, 特快T, C城际 Z 直达 L 临客 普通纯数字车次 用S代替
+  # manual_trainnum_enable 选项为 False时有效
+  # train_types: [G,D,K,T]
+  train_types: [G]
+
+  # 可接受最早出发时间 格式ex：
+  # manual_trainnum_enable 选项为 False时有效
+  earliest_time: "00:00"
+
+  # 可接受最晚抵达时间 格式ex：
+  # manual_trainnum_enable 选项为 False时有效
+  latest_time: "24:00"
+
+
+  # 过滤车次(list)，manual_trainnum_enable选项为True时启用, 格式ex：
+  # - "G1353"
+  train_list:
+    - "G542"
+
+  # 出发城市，比如深圳北，就填深圳就搜得到
+  from_station: "广州"
+
+  # 到达城市 比如深圳北，就填深圳就搜得到
+  to_station: "郑州"
+
+  # 座位(list) 多个座位ex:
+  # 可选列表有: 商务特等座, 一等座, 二等座, 硬座, 软座, 无座, 高级软卧, 软卧, 硬卧, 动卧
+  # 按照优先级排
+  # - "二等座"
+  # - "一等座"
+  ticket_types:
+    - "二等座"
+
+  # 乘车人(list) 多个乘车人ex:
+  # - "张三"
+  # - "李四"
+  ticket_people_list:
+    - "张三"
+
+  # 查询余票时间间隔, 单位为秒, 可以设置为小数,例如4.5
+  query_left_ticket_time: 5
+
+  # 登录重试次数
+  retry_login_time: 5
+
+  # 加入小黑屋时间，此功能为了防止僵尸票导致一直下单不成功错过正常的票, 单位为分钟
+  black_train_time: 5
+
+train_account:
+  user: "12306账号"
+  pwd: "12306密码"
+
+# 是否使用自动打码平台, True or False
+auto_code_enable: True
+
+# 目前只支持使用若快打验证码, 其他的暂时还没接入
+auto_code_method: ruokuai
+# # 打码平台账号
+auto_code_account_ruokuai:
+  user: "打码平台用户名"
+  pwd: "打码平台密码"
+
+# #  邮箱配置，如果抢票成功，将通过邮件配置通知给您
+email_config:
+  from_email: "发件人邮箱地址"
+  notice_email_list:
+    - "通知人邮箱地址"
+  username: "发件人的登录邮箱用户名"
+  password: "发件人的邮箱密码"
+  # email 网关
+  email_gateway: "smtp.qq.com"
+  # email 网关端口
+  email_port: 25
+
+# 是否开启邮箱通知, True or False
+email_notice_enable: True
+
+# 是否开启cdn查询, True or False, 目前还未添加
+
+# TODO: 功能添加
+cdn_enable: True
+
+
+
