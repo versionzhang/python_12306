@@ -1,18 +1,15 @@
 import datetime
-import random
 import time
 
 from logic.login.checkuser import OnlineCheckerTool
 from logic.login.login import NormalLogin
 from logic.login.passager import QueryPassengerTool
 from logic.query.dispatcher import DispatcherTool
-from logic.query.query import Query
 from config import Config
 from logic.submit.fastsubmit import FastSubmitDcOrder
 from logic.submit.submit import NormalSubmitDcOrder
 from utils.send_email import send_email
 from utils.log import Log
-from pre_processing.cities import CityData
 
 
 class Schedule(object):
@@ -154,8 +151,8 @@ class Schedule(object):
                 Log.v("12306系统每天 23:00 - 6:00 之间 维护中, 程序暂时停止运行")
                 maintain_time = self.delta_maintain_time()
                 Log.v("{0}小时 {1}分钟 {2}秒之后重新启动".format(
-                    maintain_time.seconds//3600,
-                    (maintain_time.seconds//60) % 60,
+                    maintain_time.seconds // 3600,
+                    (maintain_time.seconds // 60) % 60,
                     maintain_time.seconds % 3600 % 60))
                 time.sleep(self.delta_maintain_time().total_seconds())
             if Config.auto_code_enable:
@@ -174,13 +171,16 @@ class Schedule(object):
                     break
             if self.order_id:
                 break
-        Log.v("抢票成功，如果有配置邮箱，稍后会收到邮件通知")
+
+        Log.v("抢票成功，{notice}".format(
+            notice="你已开启邮箱配置，稍后会收到邮件通知" if Config.email_notice_enable else "如需邮件通知请先配置"))
         Log.v("车票信息：")
         for order_ticket in self.order_tickets:
             print(order_ticket)
 
         # 抢票成功发邮件信息
-        send_email(2, **{"order_no": self.order_id, "ticket_info": "</br>".join([v.to_html() for v in self.order_tickets])})
+        send_email(2, **{"order_no": self.order_id,
+                         "ticket_info": "</br>".join([v.to_html() for v in self.order_tickets])})
 
 
 if __name__ == "__main__":
