@@ -297,4 +297,4 @@ class NotCompleteOrderTicketsDetail(object):
 
 
 class CDNRecord(BasicMapping):
-    __slots__ = ('ip', 'level', 'status')
+    __slots__ = ('ip', 'level')
