@@ -294,3 +294,7 @@ class NotCompleteOrderTicketsDetail(object):
         return table.__str__()
 
     __repr__ = __str__
+
+
+class CDNRecord(BasicMapping):
+    __slots__ = ('ip', 'level', 'status')
