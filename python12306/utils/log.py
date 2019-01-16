@@ -38,7 +38,6 @@ class LogUtils(object):
     def __print(msg, msg_type):
         """
         :param msg: log text.
-        :param color: [Fore.GREEN, Fore.BLUE, Fore.YELLOW, Fore.RED]
         :param msg_type: [info, debug, warning, error]
         :return:
         """
@@ -46,7 +45,7 @@ class LogUtils(object):
         l = getattr(ticket_logger, msg_type)
         if type(msg) == str:
             if Config.basic_config.debug or msg_type != 'debug':
-                print("\t\t\t" +maping[msg_type] + msg + Fore.RESET)
+                print("\t\t\t" + maping[msg_type] + msg + Fore.RESET)
             l(msg)
         else:
             if Config.basic_config.debug or msg_type != 'debug':

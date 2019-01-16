@@ -77,7 +77,8 @@ class Dispatcher(object):
             else:
                 open_times = list(map(format_time, Config.presale_config.start_times))
                 if datetime.datetime.now() > min(open_times) + self.delta_continue_time:
-                    if Config.presale_enable and Config.presale_config.travel_date not in Config.basic_config.travel_dates:
+                    if Config.presale_enable and \
+                            Config.presale_config.travel_date not in Config.basic_config.travel_dates:
                         return Config.basic_config.travel_dates + [Config.presale_config.travel_date]
                     else:
                         return Config.basic_config.travel_dates
@@ -105,4 +106,3 @@ class Dispatcher(object):
 
 
 DispatcherTool = Dispatcher()
-

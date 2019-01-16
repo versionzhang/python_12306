@@ -5,13 +5,11 @@ from python12306.logic.login.checkuser import OnlineCheckerTool
 from python12306.logic.login.login import NormalLogin
 from python12306.logic.login.passager import QueryPassengerTool
 from python12306.logic.query.dispatcher import DispatcherTool
-from python12306.logic.query.query import Query
 from python12306.config import Config
 from python12306.logic.submit.fastsubmit import FastSubmitDcOrder
 from python12306.logic.submit.submit import NormalSubmitDcOrder
 from python12306.utils.send_email import send_email
 from python12306.utils.log import Log
-from python12306.pre_processing.cities import CityData
 
 
 class Schedule(object):
@@ -66,9 +64,6 @@ class Schedule(object):
     @staticmethod
     def query_passengers():
         return QueryPassengerTool.filter_by_config()
-
-    def query_dispatch(self):
-        pass
 
     @staticmethod
     def check_maintain():
@@ -187,7 +182,9 @@ class Schedule(object):
                 print(order_ticket)
 
             # 抢票成功发邮件信息
-            send_email(2, **{"order_no": self.order_id, "ticket_info": "</br>".join([v.to_html() for v in self.order_tickets])})
+            send_email(2,
+                       **{"order_no": self.order_id,
+                          "ticket_info": "</br>".join([v.to_html() for v in self.order_tickets])})
         else:
             Log.v("您有未完成订单, 请及时处理后再运行程序")
             send_email(3)
@@ -197,6 +194,6 @@ def main():
     instance = Schedule()
     instance.run()
 
+
 if __name__ == "__main__":
     main()
-
