@@ -10,7 +10,6 @@ from python12306.logic.submit.fastsubmit import FastSubmitDcOrder
 from python12306.logic.submit.submit import NormalSubmitDcOrder
 from python12306.utils.send_email import send_email
 from python12306.utils.log import Log
-from python12306.pre_processing.cities import CityData
 
 
 class Schedule(object):
