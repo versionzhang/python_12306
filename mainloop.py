@@ -1,4 +1,4 @@
-from python12306.mainloop import Schedule
+from python12306.scheduler import Schedule
 
 
 def main():
