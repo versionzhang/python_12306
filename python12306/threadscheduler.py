@@ -183,6 +183,7 @@ class Schedule(object):
         self.submit_order(data)
         if self.order_id:
             self.pool.close()
+        time.sleep(2)
 
     def run(self):
         if not self.login():
