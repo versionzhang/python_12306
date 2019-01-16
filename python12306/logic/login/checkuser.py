@@ -16,7 +16,7 @@ class OnlineChecker(object):
     def should_check_online(self, current_time, delta_time=120):
         """
         :param current_time: 当前时间
-        :param delta_time: 间隔时间, 单位为分钟
+        :param delta_time: 间隔时间, 单位为秒
         :return:
         """
         delta = datetime.timedelta(seconds=delta_time)
@@ -32,7 +32,7 @@ class OnlineChecker(object):
         }
         json_response = send_requests(LOGIN_SESSION, USER_CHECK_URL_MAPPING, data=data)
         status, msg = submit_response_checker(json_response, ["status", "data.flag"], True,
-                                              "用户在线状态检测: 在线检测通过")
+                                              "用户在线状态检测: -----在线检测通过-----")
         return status, msg
 
 

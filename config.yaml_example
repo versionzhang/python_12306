@@ -120,8 +120,18 @@ email_config:
 # 是否开启邮箱通知, True or False
 email_notice_enable: True
 
-# 是否开启cdn查询, True or False, 目前还未添加
+# 在线检查时间间隔, 单位秒, 整数
+online_check_time: 120
 
+# 是否开启多线程查票
+# 不开启多线程查票的话, 多日期的查询是串行的, 开启多线程查询多个日期的查询模式是并行的
+# 但是多线程对12306是并发请求的,有可能会导致ip被12306暂时封禁. 这个捡漏的时候可以试一下看看效果
+# 预售的时候就暂时不要启用这个选项,会影响你的登录状态,如果被12306视为异常你的登录就会失效, 需要
+# 重新登录
+multi_threading_enable: False
+
+
+# 是否开启cdn查询, True or False, 目前还未添加
 # TODO: 功能添加
 cdn_enable: True
 

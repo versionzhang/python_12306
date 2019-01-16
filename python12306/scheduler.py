@@ -39,7 +39,8 @@ class Schedule(object):
 
     def online_checker(self):
         # 两分钟检测一次
-        flag = OnlineCheckerTool.should_check_online(datetime.datetime.now())
+        flag = OnlineCheckerTool.should_check_online(
+            datetime.datetime.now(), Config.online_check_time)
         if flag:
             status, msg = OnlineCheckerTool.checker()
             OnlineCheckerTool.update_check_time()
@@ -133,33 +134,60 @@ class Schedule(object):
                 self.order_tickets = submit.query_no_complete_order()
                 break
 
-    def run(self):
+    def notice_user(self):
+        if self.order_id:
+            Log.v("抢票成功，{notice}".format(
+                notice="你已开启邮箱配置，稍后会收到邮件通知" if Config.email_notice_enable else "如需邮件通知请先配置"))
+            Log.v("车票信息：")
+            for order_ticket in self.order_tickets:
+                print(order_ticket)
+            # 抢票成功发邮件信息
+            send_email(2,
+                       **{"order_no": self.order_id,
+                          "ticket_info": "</br>".join([v.to_html() for v in self.order_tickets])})
+        else:
+            Log.v("您有未完成订单, 请及时处理后再运行程序")
+            send_email(3)
+
+    def pre_check(self):
         if not self.login():
-            return
+            return False
         p_status = self.query_passengers()
         if not p_status:
-            return
+            return False
         if not Config.auto_code_enable:
             Log.v("未开启自动打码功能, 不检测用户登录状态")
-        Log.v("正在查询车次余票信息")
+        return True
 
+    def maintain_mode(self):
+        if self.check_maintain():
+            Log.v("12306系统每天 23:00 - 6:00 之间 维护中, 程序暂时停止运行")
+            maintain_time = self.delta_maintain_time()
+            Log.v("{0}小时 {1}分钟 {2}秒之后重新启动".format(
+                maintain_time.seconds // 3600,
+                (maintain_time.seconds // 60) % 60,
+                maintain_time.seconds % 3600 % 60))
+            time.sleep(self.delta_maintain_time().total_seconds())
+
+    def heart_beat_mode(self):
+        if Config.auto_code_enable:
+            status, msg = self.online_checker()
+            Log.v(msg)
+            if not status:
+                Log.e("心跳登录失败，继续重试中，建议手动检查原因再尝试重启")
+                self.online_checker_now()
+
+    def run(self):
+        status = self.pre_check()
+        if not status:
+            return
+
+        Log.v("正在查询车次余票信息")
         count = 0
 
         while True:
-            if self.check_maintain():
-                Log.v("12306系统每天 23:00 - 6:00 之间 维护中, 程序暂时停止运行")
-                maintain_time = self.delta_maintain_time()
-                Log.v("{0}小时 {1}分钟 {2}秒之后重新启动".format(
-                    maintain_time.seconds // 3600,
-                    (maintain_time.seconds // 60) % 60,
-                    maintain_time.seconds % 3600 % 60))
-                time.sleep(self.delta_maintain_time().total_seconds())
-            if Config.auto_code_enable:
-                status, msg = self.online_checker()
-                Log.v(msg)
-                if not status:
-                    Log.e("心跳登录失败，继续重试中，建议手动检查原因再尝试重启")
-                    self.online_checker_now()
+            self.maintain_mode()
+            self.heart_beat_mode()
 
             dates = DispatcherTool.query_travel_dates
             for query_date in dates:
@@ -173,21 +201,7 @@ class Schedule(object):
                     break
             if self.order_id or self.unfinished_order:
                 break
-
-        if self.order_id:
-            Log.v("抢票成功，{notice}".format(
-                notice="你已开启邮箱配置，稍后会收到邮件通知" if Config.email_notice_enable else "如需邮件通知请先配置"))
-            Log.v("车票信息：")
-            for order_ticket in self.order_tickets:
-                print(order_ticket)
-
-            # 抢票成功发邮件信息
-            send_email(2,
-                       **{"order_no": self.order_id,
-                          "ticket_info": "</br>".join([v.to_html() for v in self.order_tickets])})
-        else:
-            Log.v("您有未完成订单, 请及时处理后再运行程序")
-            send_email(3)
+        self.notice_user()
 
 
 def main():

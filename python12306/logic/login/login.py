@@ -49,7 +49,8 @@ class NormalLogin(object):
         json_response = send_requests(LOGIN_SESSION, self.URLS['login'], data=payload)
         result, msg = json_status(json_response, [], '0')
         if not result:
-            return False, json_response.get("result_message", None)
+            return (False, json_response.get("result_message", None)) \
+                if isinstance(json_response, dict) else (False, '登录接口提交返回数据出现问题')
         self._passportredirect()
         result, msg, apptk = self._uamtk()
         if not result:

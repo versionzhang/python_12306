@@ -38,7 +38,7 @@ setup(
     ],
     entry_points={
         "console_scripts": {
-            "py12306 = python12306.mainloop:main"
+            "py12306 = python12306.cmd:main"
         },
     },
 
