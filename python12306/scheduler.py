@@ -51,6 +51,8 @@ class Schedule(object):
                 login_status = self.login()
                 if not login_status:
                     return False, "重试登录失败"
+                else:
+                    return True, "重试登录成功"
             else:
                 return status, msg
         else:
