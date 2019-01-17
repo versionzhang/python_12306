@@ -11,6 +11,7 @@ from python12306.logic.submit.submit import NormalSubmitDcOrder
 from python12306.utils.send_email import send_email
 from python12306.utils.log import Log
 from python12306.pre_processing.cities import CityData
+from python12306.utils.cdn import CdnStorage
 
 
 class Schedule(object):
@@ -135,6 +136,8 @@ class Schedule(object):
                 break
 
     def run(self):
+        if Config.cdn_enable:
+            CdnStorage.run()
         if not self.login():
             return
         p_status = self.query_passengers()

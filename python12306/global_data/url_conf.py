@@ -142,7 +142,8 @@ QUERY_URL = {
     'method': 'GET',
     'headers': {
         'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init'
-    }
+    },
+    'type': 'cdn'
 }
 
 SUBMIT_URLS = {

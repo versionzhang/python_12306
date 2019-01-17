@@ -9,7 +9,7 @@ from python12306.global_data.url_conf import QUERY_URL_MAPPING
 from python12306.pre_processing.cities import CityData
 from python12306.utils.log import Log
 
-from python12306.global_data.session import LOGIN_SESSION
+from python12306.global_data.session import NOTLOGIN_SESSION
 from python12306.utils.lookup import BlackTrains
 from python12306.utils.net import send_requests
 
@@ -28,7 +28,7 @@ class Query(object):
             r'leftTicketDTO.to_station': CityData.find_city_by_name(Config.basic_config.to_station).code,
             r'purpose_codes': find_by_name("ticket", Config.basic_config.ticket_type).sys_code
         }
-        json_response = send_requests(LOGIN_SESSION, QUERY_URL_MAPPING, params=params)
+        json_response = send_requests(NOTLOGIN_SESSION, QUERY_URL_MAPPING, params=params)
         if not isinstance(json_response, (list, dict)):
             return []
         return [TrainDetail(v.split('|')) for v in json_response['data']['result']] or []

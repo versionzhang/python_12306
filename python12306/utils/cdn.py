@@ -1,9 +1,13 @@
 import copy
 import math
+import random
 import socket
 import time
+from multiprocessing.pool import ThreadPool
+from threading import Lock
 
 import requests
+from python12306.utils.log import Log
 from urllib3.exceptions import SSLError, MaxRetryError
 
 from python12306.global_data.useragent import CHROME_USER_AGENT
@@ -18,10 +22,14 @@ headers = {
         }
 
 
-class CdnTools(object):
+class CdnChecker(object):
     def __init__(self):
         self.raw_cdn_list = copy.copy(CDN_LIST)
         self.result = []
+        self.status = False
+        self.pool = ThreadPool(10)
+        self.lock = Lock()
+        self.max_available_level = 5
 
     @property
     def check_url(self):
@@ -29,6 +37,22 @@ class CdnTools(object):
 
     def build_url(self, cdn_ip):
         return "http://{0}/{1}".format(cdn_ip, self.check_url)
+
+    def update_result(self, result):
+        with self.lock:
+            if not any(filter(lambda x: x.ip == result.ip, self.result)):
+                self.result.append(result)
+            else:
+                for i, v in enumerate(self.result):
+                    if v.ip == result["ip"]:
+                        # update level
+                        self.result[i].level = math.ceil((self.result[i].level + result.level) / 2)
+
+    def remove_ip(self, ip):
+        with self.lock:
+            # remove ip in result
+            data = list(filter(lambda x: x.ip != ip, self.result))
+            self.result = data
 
     def verify(self, cdn_ip):
         """
@@ -43,15 +67,30 @@ class CdnTools(object):
             if response.status_code == requests.codes.ok and 'message' not in response.text:
                 delta = end - start
                 result = CDNRecord(dict(ip=cdn_ip, level=math.ceil(delta/0.5)))
-                self.result.append(result)
+                self.update_result(result)
                 return True
-            return False
         except (requests.exceptions.Timeout, requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError):
-            return False
+            pass
         except socket.error:
-            return False
+            pass
         except (SSLError, MaxRetryError):
-            return False
+            pass
+        self.remove_ip(cdn_ip)
+        return False
 
+    def run(self):
+        Log.v("您已开启cdn加速")
+        Log.v("正在检查cdn列表可用状态....(大概将会花费10分钟左右)")
+        self.pool.map(self.verify, self.raw_cdn_list)
+        self.status = True
+        Log.v("共获取{0}个可用的cdn".format(len(self.result)))
+        Log.v("各个cdn的等级情况如下(level等级越低证明, cdn的连接更快):")
+        level_result = [v.level for v in self.result]
+        level_types = set(level_result)
+        for v in level_types:
+            Log.v("level {0} 共有 {1} 个".format(v, level_result.count(v)))
 
+    def choose_one(self):
+        return random.choice([v for v in self.result if v.level <= self.max_available_level])
 
+CdnStorage = CdnChecker()
