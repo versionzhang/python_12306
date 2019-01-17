@@ -1,10 +1,12 @@
 import copy
 import xml.etree.ElementTree as ET
 import requests
+import urllib3
+from urllib3.util import parse_url
 
 from python12306.comonexception import ResponseError, ResponseCodeError
 from python12306.utils.log import Log
-
+from python12306.utils.cdn import CdnStorage
 
 def send_captcha_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
     """
@@ -99,16 +101,34 @@ def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
         )
     else:
         session.headers.pop("Content-Type", None)
+    if urlmapping_obj.type.lower() == 'cdn' and CdnStorage.status and CdnStorage.result:
+        # use cdn to check ticket
+        cdn_ip = CdnStorage.choose_one().ip
+        urlmapping_obj.url = urlmapping_obj.url.replace(
+            parse_url(urlmapping_obj.url).host,
+            cdn_ip)
+        Log.v("当前正在使用CDN IP 为{0}".format(cdn_ip))
     try:
         Log.d("请求 url {url}".format(url=urlmapping_obj.url))
         try:
-            response = session.request(method=urlmapping_obj.method,
-                                       url=urlmapping_obj.url,
-                                       params=params,
-                                       data=data,
-                                       timeout=10,
-                                       # allow_redirects=False,
-                                       **kwargs)
+            if urlmapping_obj.type.lower() == 'cdn':
+                # only query data disable warning
+                urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+                response = session.request(method=urlmapping_obj.method,
+                                           url=urlmapping_obj.url,
+                                           params=params,
+                                           data=data,
+                                           timeout=10,
+                                           # allow_redirects=False,
+                                           verify=False,
+                                           **kwargs)
+            else:
+                response = session.request(method=urlmapping_obj.method,
+                                           url=urlmapping_obj.url,
+                                           params=params,
+                                           data=data,
+                                           timeout=10,
+                                           **kwargs)
         except requests.RequestException as e:
             Log.w(e)
             Log.w("请求{0}异常 ".format(urlmapping_obj.url))

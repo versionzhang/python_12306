@@ -47,7 +47,7 @@ class TicketMapping(BasicMapping):
 
 class UrlMapping(object):
     __slots__ = (
-        'url', 'method', 'headers', 'response'
+        'url', 'method', 'headers', 'response', 'type'
     )
 
     def __init__(self, data):
@@ -65,6 +65,9 @@ class UrlMapping(object):
                     setattr(self, v, 'json')
                 if v == 'headers':
                     setattr(self, v, {})
+                # add cdn type, if type is cdn, use cdn list ip to request data.
+                if v == 'type':
+                    setattr(self, v, 'default')
 
     def __str__(self):
         return str(type(self)) + ' '.join([
@@ -294,3 +297,7 @@ class NotCompleteOrderTicketsDetail(object):
         return table.__str__()
 
     __repr__ = __str__
+
+
+class CDNRecord(BasicMapping):
+    __slots__ = ('ip', 'level')
