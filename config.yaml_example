@@ -131,8 +131,7 @@ online_check_time: 120
 multi_threading_enable: False
 
 
-# 是否开启cdn查询, True or False, 目前还未添加
-# TODO: 功能添加
+# 是否开启cdn查询, True or False
 cdn_enable: True
 
 
