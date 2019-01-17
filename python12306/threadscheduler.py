@@ -1,6 +1,4 @@
 import datetime
-import time
-from queue import Queue
 from multiprocessing.pool import ThreadPool
 
 from python12306.config import Config
@@ -31,8 +29,8 @@ class Schedule(BaseSchedule):
 
             dates = DispatcherTool.query_travel_dates
             self.pool.map(self.batch_tasks, dates)
-            self.pool.close()
             if self.order_id or self.unfinished_order:
+                self.pool.close()
                 break
         self.notice_user()
 

@@ -1,5 +1,3 @@
-import sys
-
 from python12306.scheduler import Schedule
 from python12306.threadscheduler import Schedule as Multischedule
 from python12306.config import Config
