@@ -78,7 +78,7 @@ cdn检测放在程序刚运行时候进行检测, 大概需要10分钟才能检�
 
 适合开箱即用
 
-1. 使用命令 `pip install git+https://github.com/versionzhang/python_12306@dev`
+1. 使用命令 `pip install git+https://github.com/versionzhang/python_12306@master`
 即可安装此项目，项目会生成py12306的命令
 2. 在你需要运行的文件夹内创建`config.yaml`，编辑好配置文件即可使用 `py12306` 运行程序
 
