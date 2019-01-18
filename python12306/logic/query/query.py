@@ -9,7 +9,7 @@ from python12306.global_data.url_conf import QUERY_URL_MAPPING
 from python12306.pre_processing.cities import CityData
 from python12306.utils.log import Log
 
-from python12306.global_data.session import NOTLOGIN_SESSION
+from python12306.global_data.session import LOGIN_SESSION
 from python12306.utils.lookup import BlackTrains
 from python12306.utils.net import send_requests
 
@@ -18,17 +18,19 @@ from python12306.utils.data_structure import TrainDetail
 
 class Query(object):
 
-    def __init__(self, travel_date):
+    def __init__(self, travel_date, from_station, to_station):
         self.travel_date = travel_date
+        self.from_station = from_station
+        self.to_station = to_station
 
     def run_query(self):
         params = {
             r'leftTicketDTO.train_date': self.travel_date,
-            r'leftTicketDTO.from_station': CityData.find_city_by_name(Config.basic_config.from_station).code,
-            r'leftTicketDTO.to_station': CityData.find_city_by_name(Config.basic_config.to_station).code,
+            r'leftTicketDTO.from_station': CityData.find_city_by_name(self.from_station).code,
+            r'leftTicketDTO.to_station': CityData.find_city_by_name(self.to_station).code,
             r'purpose_codes': find_by_name("ticket", Config.basic_config.ticket_type).sys_code
         }
-        json_response = send_requests(NOTLOGIN_SESSION, QUERY_URL_MAPPING, params=params)
+        json_response = send_requests(LOGIN_SESSION, QUERY_URL_MAPPING, params=params)
         if not isinstance(json_response, (list, dict)):
             return []
         return [TrainDetail(v.split('|')) for v in json_response['data']['result']] or []

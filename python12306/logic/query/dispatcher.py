@@ -85,12 +85,14 @@ class Dispatcher(object):
                 else:
                     return Config.basic_config.travel_dates
 
-    def run(self, travel_date):
-        Log.v("当前查询日期为 {}".format(travel_date))
-        q = Query(travel_date)
+    def run(self, query_data):
+        Log.v("当前查询日期为 **{0}** 出发地 **{1}** 目的地 **{2}**".format(
+            query_data[0], query_data[1][0], query_data[1][1]))
+        q = Query(query_data[0], query_data[1][0], query_data[1][1])
         data = q.filter()
         if not data:
-            Log.v("日期 {0} 满足条件的车次暂无余票, 正在重新查询".format(travel_date))
+            Log.v("日期 **{0}** 出发地 **{1}** 目的地 **{2}** 满足条件的车次暂无余票, 正在重新查询".format(
+                query_data[0], query_data[1][0], query_data[1][1]))
 
         for v in data:
             print("\t\t\t当前座位席别 {}".format(v[0].name))

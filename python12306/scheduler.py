@@ -1,5 +1,6 @@
 import datetime
 import time
+from itertools import product
 
 from python12306.logic.login.checkuser import OnlineCheckerTool
 from python12306.logic.login.login import NormalLogin
@@ -187,17 +188,22 @@ class Schedule(object):
             return
 
         Log.v("正在查询车次余票信息")
-        count = 0
+        count = 1
 
         while True:
             self.maintain_mode()
             self.heart_beat_mode()
-
             dates = DispatcherTool.query_travel_dates
-            for query_date in dates:
+            if Config.basic_config.use_station_group:
+                station_groups = [(v.from_station, v.to_station) for v in Config.basic_config.station_groups]
+            else:
+                station_groups = list(product(Config.basic_config.from_stations, Config.basic_config.to_stations))
+            query_params = list(product(dates, station_groups))
+
+            for query_params in query_params:
                 Log.v("查询第 {0} 次".format(count))
                 n = datetime.datetime.now()
-                data = DispatcherTool.run(query_date)
+                data = DispatcherTool.run(query_params)
                 count += 1
                 self.submit_order(data)
                 DispatcherTool.output_delta_time(n)
