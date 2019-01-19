@@ -9,7 +9,7 @@ from python12306.logic.query.dispatcher import DispatcherTool
 from python12306.config import Config
 from python12306.logic.submit.fastsubmit import FastSubmitDcOrder
 from python12306.logic.submit.submit import NormalSubmitDcOrder
-from python12306.utils.send_email import send_email
+from python12306.utils.notice import NoticeTool
 from python12306.utils.log import Log
 from python12306.pre_processing.cities import CityData
 from python12306.utils.cdn import CdnStorage
@@ -146,13 +146,13 @@ class Schedule(object):
             Log.v("车票信息：")
             for order_ticket in self.order_tickets:
                 print(order_ticket)
-            # 抢票成功发邮件信息
-            send_email(2,
-                       **{"order_no": self.order_id,
-                          "ticket_info": "</br>".join([v.to_html() for v in self.order_tickets])})
+                # 抢票成功发邮件信息
+                NoticeTool.notice(msg_type=2,
+                                  **{"order_no": self.order_id,
+                                     "ticket_info": "</br>".join([v.to_html() for v in self.order_tickets])})
         else:
             Log.v("您有未完成订单, 请及时处理后再运行程序")
-            send_email(3)
+            NoticeTool.notice(msg_type=3)
 
     def pre_check(self):
         if Config.cdn_enable:

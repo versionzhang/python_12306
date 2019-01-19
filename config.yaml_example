@@ -149,6 +149,11 @@ email_config:
 # 是否开启邮箱通知, True or False
 email_notice_enable: True
 
+# 是否开启微信通知
+weixin_notice_enable: True
+# server酱key
+weixin_sckey: SCU42247T276689ceca74503c4bac66557b5f2ce15c432b7882f8a
+
 # 在线检查时间间隔, 单位秒, 整数
 online_check_time: 120
 
