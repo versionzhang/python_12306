@@ -123,6 +123,10 @@ train_account:
 # 是否使用自动打码平台, True or False
 auto_code_enable: True
 
+# 是否保存图片在当前文件夹内，如果开启则直接保存图片到当前文件夹内
+# 如果不开启则直接前台显示选择
+save_img_enable: True
+
 # 目前只支持使用若快打验证码, 其他的暂时还没接入
 auto_code_method: ruokuai
 # # 打码平台账号

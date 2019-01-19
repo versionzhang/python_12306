@@ -187,7 +187,10 @@ class Captcha(object):
 
     def verifyhandle_hand(self):
         img = Image.open(BytesIO(self.generator_image()))
-        img.show()
+        if not Config.save_img_enable:
+            img.show()
+        else:
+            img.save('captcha.jpg')
         Log.v(
             """
             -----------------

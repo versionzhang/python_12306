@@ -1,5 +1,5 @@
 __title__ = 'py12306'
-__version__ = '0.9.0'
+__version__ = '0.9.1'
 __author__ = 'versionzhang'
 __author_email__ = 'versionzhang@gmail.com'
 __url__ = 'https://github.com/versionzhang/python_12306'

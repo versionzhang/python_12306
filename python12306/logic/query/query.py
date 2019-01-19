@@ -118,12 +118,12 @@ class QueryFilter(object):
         self.filter_by_seat()
         # 过滤小黑屋的车次
         self.result = self.filter_black_trains()
-        if self.result:
-            Log.v("查找到符合配置的车次信息: {0}".format(','.join(
-                [v[1].stationTrainCode.value for v in self.result])))
         if Config.basic_config.manual_trainnum_enable:
             self.result = self.filter_train_num()
         else:
             self.result = self.filter_train_time()
             self.result = self.filter_train_type()
+        if self.result:
+            Log.v("查找到符合配置的车次信息: {0}".format(','.join(
+                [v[1].stationTrainCode.value for v in self.result])))
         return self.result
