@@ -80,13 +80,18 @@ cdn检测放在程序刚运行时候进行检测, 大概需要10分钟才能检�
 ```
 
 
-**2019.1.17 添加是否保存图片在本地的配置项**
+**2019.1.17 添加是否保存图片在本地的配置项, 添加微信通知**
 
 ```
 auto_code_enable: False
 # 是否保存图片在当前文件夹内，如果开启则直接保存图片到当前文件夹内
 # 如果不开启则直接前台显示图片
 save_img_enable: True
+
+# 是否开启微信通知
+weixin_notice_enable: True
+# server酱key
+weixin_sckey: server酱key
 ```
 
 ## python版本支持
