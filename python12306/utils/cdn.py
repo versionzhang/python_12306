@@ -7,6 +7,8 @@ from multiprocessing.pool import ThreadPool
 from threading import Lock
 
 import requests
+import urllib3
+
 from python12306.utils.data_loader import LocalSimpleCache
 
 from python12306.utils.log import Log
@@ -38,7 +40,7 @@ class CdnChecker(object):
         return "/otn/login/init"
 
     def build_url(self, cdn_ip):
-        return "http://{0}/{1}".format(cdn_ip, self.check_url)
+        return "https://{0}/{1}".format(cdn_ip, self.check_url)
 
     def update_result(self, result):
         with self.lock:
@@ -64,7 +66,8 @@ class CdnChecker(object):
         """
         start = time.time()
         try:
-            response = requests.get(self.build_url(cdn_ip), headers=headers, timeout=6)
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+            response = requests.get(self.build_url(cdn_ip), headers=headers, timeout=6, verify=False)
             end = time.time()
             if response.status_code == requests.codes.ok and 'message' not in response.text:
                 delta = end - start
