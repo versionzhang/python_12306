@@ -104,18 +104,21 @@ def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
     if urlmapping_obj.type.lower() == 'cdn' and CdnStorage.status and CdnStorage.result:
         # use cdn to check ticket
         cdn_ip = CdnStorage.choose_one().ip
-        urlmapping_obj.url = urlmapping_obj.url.replace(
+        request_url = urlmapping_obj.url.replace(
             parse_url(urlmapping_obj.url).host,
             cdn_ip)
         Log.v("当前正在使用CDN IP 为{0}".format(cdn_ip))
+    else:
+        request_url = urlmapping_obj.url
+
     try:
-        Log.d("请求 url {url}".format(url=urlmapping_obj.url))
+        Log.d("请求 url {url}".format(url=request_url))
         try:
             if urlmapping_obj.type.lower() == 'cdn':
                 # only query data disable warning
                 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
                 response = session.request(method=urlmapping_obj.method,
-                                           url=urlmapping_obj.url,
+                                           url=request_url,
                                            params=params,
                                            data=data,
                                            timeout=10,
@@ -124,20 +127,20 @@ def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
                                            **kwargs)
             else:
                 response = session.request(method=urlmapping_obj.method,
-                                           url=urlmapping_obj.url,
+                                           url=request_url,
                                            params=params,
                                            data=data,
                                            timeout=10,
                                            **kwargs)
         except requests.RequestException as e:
             Log.w(e)
-            Log.w("请求{0}异常 ".format(urlmapping_obj.url))
+            Log.w("请求{0}异常 ".format(request_url))
             raise ResponseError
         if params:
-            Log.d("{url} Get 参数 {data}".format(url=urlmapping_obj.url,
+            Log.d("{url} Get 参数 {data}".format(url=request_url,
                                                data=params))
         if data:
-            Log.d("{url} Post 参数 {data}".format(url=urlmapping_obj.url,
+            Log.d("{url} Post 参数 {data}".format(url=request_url,
                                                 data=data))
         Log.d("返回response url {url}".format(url=response.url))
         if response.status_code == requests.codes.ok:
@@ -148,7 +151,7 @@ def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
                 return result
             if 'json' in response.headers['Content-Type']:
                 result = response.json()
-                Log.d("{url} 返回值 {result}".format(url=urlmapping_obj.url,
+                Log.d("{url} 返回值 {result}".format(url=response.url,
                                                   result=result))
                 return result
             # other type

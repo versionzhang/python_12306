@@ -93,7 +93,8 @@ class CdnChecker(object):
             Log.v("level {0} 共有 {1} 个".format(v, level_result.count(v)))
 
     def choose_one(self):
-        return random.choice([v for v in self.result if v.level <= self.max_available_level])
+        with self.lock:
+            return random.choice([v for v in self.result if v.level <= self.max_available_level])
 
     def load_exists(self):
         s = LocalSimpleCache([], "cdn.pickle", expire_time=24)
