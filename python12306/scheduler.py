@@ -156,7 +156,7 @@ class Schedule(object):
 
     def pre_check(self):
         if Config.cdn_enable:
-            CdnStorage.run()
+            CdnStorage.load_exists()
         if not self.login():
             return False
         p_status = self.query_passengers()

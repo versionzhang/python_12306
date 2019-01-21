@@ -5,7 +5,7 @@ import pickle
 
 class LocalSimpleCache(object):
 
-    def __init__(self, raw_data, pickle_name, expire_time=2):
+    def __init__(self, raw_data, pickle_name, expire_time=24):
         """
         :param raw_data: 需要导出的数据
         :param pickle_name: 导出的pickle名称
@@ -22,7 +22,7 @@ class LocalSimpleCache(object):
     @property
     def pickle_path(self):
         return os.path.join(
-            os.path.abspath(os.path.dirname(__file__)),
+            os.path.abspath(os.getcwd()),
             self.pickle_name)
 
     def export_pickle(self):

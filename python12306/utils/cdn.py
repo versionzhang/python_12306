@@ -7,6 +7,8 @@ from multiprocessing.pool import ThreadPool
 from threading import Lock
 
 import requests
+from python12306.utils.data_loader import LocalSimpleCache
+
 from python12306.utils.log import Log
 from urllib3.exceptions import SSLError, MaxRetryError
 
@@ -19,7 +21,7 @@ headers = {
             'Host': r'kyfw.12306.cn',
             'Referer': 'https://kyfw.12306.cn/otn/login/init',
             'User-Agent': CHROME_USER_AGENT,
-        }
+}
 
 
 class CdnChecker(object):
@@ -92,5 +94,27 @@ class CdnChecker(object):
 
     def choose_one(self):
         return random.choice([v for v in self.result if v.level <= self.max_available_level])
+
+    def load_exists(self):
+        s = LocalSimpleCache([], "cdn.pickle", expire_time=24)
+        load = s.get_final_data()
+        if not load.raw_data:
+            self.run()
+            s.raw_data = self.result
+            Log.v("导出已经检查完毕的cdn列表")
+            s.export_pickle()
+        else:
+            Log.v("您已开启cdn加速")
+            Log.v("正在导入之前检查的cdn列表")
+            self.status = True
+            self.result = load.raw_data
+            Log.v("共导入{0}个可用的cdn".format(len(self.result)))
+            Log.v("各个cdn的等级情况如下(level等级越低证明, cdn的连接更快):")
+            level_result = [v.level for v in self.result]
+            level_types = set(level_result)
+            for v in level_types:
+                Log.v("level {0} 共有 {1} 个".format(v, level_result.count(v)))
+        return self
+
 
 CdnStorage = CdnChecker()
