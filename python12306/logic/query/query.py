@@ -31,9 +31,15 @@ class Query(object):
             r'purpose_codes': find_by_name("ticket", Config.basic_config.ticket_type).sys_code
         }
         json_response = send_requests(LOGIN_SESSION, QUERY_URL_MAPPING, params=params)
-        if not isinstance(json_response, (list, dict)):
+        if not isinstance(json_response, dict):
             return []
-        return [TrainDetail(v.split('|')) for v in json_response['data']['result']] or []
+        try:
+            if "data" in json_response and "result" in json_response['data']:
+                return [TrainDetail(v.split('|')) for v in json_response['data']['result']] or []
+            else:
+                return []
+        except KeyError:
+            return []
 
     @staticmethod
     def pretty_output(t):
