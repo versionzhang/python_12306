@@ -2,7 +2,7 @@ import os
 import datetime
 import logging.handlers
 
-from colorama import Fore
+from colorama import init, Fore
 
 from python12306.config import Config
 
@@ -31,6 +31,8 @@ handler = logging.handlers.RotatingFileHandler(
 handler.setFormatter(formatter)
 ticket_logger.addHandler(handler)
 
+# wrapper stdout
+init()
 
 class LogUtils(object):
 
