@@ -1,5 +1,7 @@
 import copy
 import xml.etree.ElementTree as ET
+from urllib.parse import urljoin
+
 import requests
 import urllib3
 from urllib3.util import parse_url
@@ -156,6 +158,21 @@ def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
                 return result
             # other type
             return response.text
+        elif response.status_code == requests.codes.found:
+            if 'leftTicket/query' in request_url and 'json' in response.headers['Content-Type']:
+                Log.v("检测到查票接口有变, 更改为新的查票接口")
+                result = response.json()
+                try:
+                    url = result["c_url"]
+                    urlmapping_obj.url = urljoin("https://kyfw.12306.cn/otn/", url)
+                except KeyError:
+                    Log.w(response.url)
+                    Log.w(response.status_code)
+                    Log.w("更改查票接口失败")
+            else:
+                Log.w(response.url)
+                Log.w(response.status_code)
+                Log.w("返回状态码有问题")
         else:
             Log.w(response.url)
             Log.w(response.status_code)

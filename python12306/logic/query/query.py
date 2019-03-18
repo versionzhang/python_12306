@@ -1,5 +1,7 @@
 import copy
+from collections import OrderedDict
 from itertools import chain
+from urllib.parse import urlencode
 
 from prettytable import PrettyTable
 
@@ -24,12 +26,13 @@ class Query(object):
         self.to_station = to_station
 
     def run_query(self):
-        params = {
-            r'leftTicketDTO.train_date': self.travel_date,
-            r'leftTicketDTO.from_station': CityData.find_city_by_name(self.from_station).code,
-            r'leftTicketDTO.to_station': CityData.find_city_by_name(self.to_station).code,
-            r'purpose_codes': find_by_name("ticket", Config.basic_config.ticket_type).sys_code
-        }
+        params = OrderedDict([
+            (r'leftTicketDTO.train_date', self.travel_date),
+            (r'leftTicketDTO.from_station', CityData.find_city_by_name(self.from_station).code),
+            (r'leftTicketDTO.to_station', CityData.find_city_by_name(self.to_station).code),
+        (r'purpose_codes', find_by_name("ticket", Config.basic_config.ticket_type).sys_code)
+        ])
+        params = urlencode(params)
         json_response = send_requests(LOGIN_SESSION, QUERY_URL_MAPPING, params=params)
         if not isinstance(json_response, dict):
             return []
