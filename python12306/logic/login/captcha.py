@@ -194,7 +194,6 @@ class Captcha(object):
         "type": "D"
         }, headers=FREE_CAPTCHA_HEADERS)
         try:
-            print(v.text)
             data = ast.literal_eval(v.json()["res"])
         except KeyError:
             return False, "免费打码接口返回出现问题"
