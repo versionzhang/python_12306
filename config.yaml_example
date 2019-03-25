@@ -127,9 +127,14 @@ auto_code_enable: True
 # 如果不开启则直接前台显示选择
 save_img_enable: True
 
-# 目前只支持使用若快打验证码, 其他的暂时还没接入
+# 目前支持使用若快打码以及免费打码
+# 若快打码配置
 auto_code_method: ruokuai
-# # 打码平台账号
+
+# 免费打码配置, 使用https://12306.jiedanba.cn/服务
+# auto_code_method: freeapi
+
+# 若快打码平台账号
 auto_code_account_ruokuai:
   user: "打码平台用户名"
   pwd: "打码平台密码"

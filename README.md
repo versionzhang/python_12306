@@ -94,6 +94,16 @@ weixin_notice_enable: True
 weixin_sckey: server酱key
 ```
 
+
+**2019.3.25 添加免费打码平台**
+
+使用[https://12306.jiedanba.cn/](https://12306.jiedanba.cn/)免费打码
+具体配置文件内修改配置项
+
+```
+auto_code_method: freeapi
+```
+
 ## python版本支持
 
 3.5以上

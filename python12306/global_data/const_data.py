@@ -91,6 +91,18 @@ TourTypeList = [TourMapping(v) for v in TOUR_DATA]
 SeatTypeList = [SeatMapping(v) for v in SEAT_DATA]
 TicketTypeList = [TicketMapping(v) for v in TICKET_DATA]
 
+FREE_CAPTCHA_URL = "https://12306.jiedanba.cn/api/v2/getCheck"
+FREE_CAPTCHA_CHECK_URL = "https://check.huochepiao.360.cn/img_vcode"
+
+FREE_CAPTCHA_HEADERS = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept-Language": "en,en-US;q=0.9,zh;q=0.8,zh-CN;q=0.7",
+    "Cache-Control": "max-age=0",
+    "Content-Type": "text/plain",
+    "Referer": "https://check.huochepiao.360.cn/",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36",
+}
 
 def find_by_phrase(msg):
     data = list(filter(lambda x: msg in x["msg"], SUBMIT_ERR_MESSAGES_LIST))

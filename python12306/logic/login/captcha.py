@@ -1,11 +1,13 @@
+import ast
 import base64
 from io import BytesIO
-
+from json import JSONDecodeError
 from PIL import Image
 
 import requests
 from hashlib import md5
 
+from python12306.global_data.const_data import FREE_CAPTCHA_URL, FREE_CAPTCHA_CHECK_URL, FREE_CAPTCHA_HEADERS
 from python12306.comonexception import ResponseCodeError, ResponseError
 from python12306.global_data.session import LOGIN_SESSION
 from python12306.global_data.url_conf import LOGIN_URL_MAPPING
@@ -167,10 +169,36 @@ class Captcha(object):
         return data
 
     def verify(self):
-        if Config.auto_code_enable and Config.auto_code_method == 'ruokuai':
-            self.method = 'ruokuai'
+        if Config.auto_code_enable:
+            if Config.auto_code_method == 'ruokuai':
+                self.method = 'ruokuai'
+            elif Config.auto_code_method == 'freeapi':
+                self.method = 'freeapi'
         m = getattr(self, "verifyhandle_{method}".format(method=self.method))
         return m()
+
+    def verifyhandle_freeapi(self):
+        Log.v("使用免费api进行验证码识别")
+        img_base64 = base64.b64encode(self.generator_image()).decode()
+        r = requests.post(FREE_CAPTCHA_URL,
+                          json={"base64": img_base64})
+        try:
+            check = r.json()["data"]["check"]
+        except (KeyError, JSONDecodeError):
+            return False, "免费打码接口返回出现问题"
+        v = requests.post(FREE_CAPTCHA_CHECK_URL, json={
+        "=": "",
+        "check": check,
+        "img_buf": img_base64,
+        "logon": 1,
+        "type": "D"
+        }, headers=FREE_CAPTCHA_HEADERS)
+        try:
+            print(v.text)
+            data = ast.literal_eval(v.json()["res"])
+        except KeyError:
+            return False, "免费打码接口返回出现问题"
+        return self.check(data)
 
     def verifyhandle_ruokuai(self):
         c = RClient()
