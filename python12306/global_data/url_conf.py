@@ -6,14 +6,57 @@ from python12306.utils.data_structure import UrlMapping
 
 LOGIN_URLS = {
     'normal': {
+        'init1':
+            {
+                'url': r'https://kyfw.12306.cn/',
+                'method': 'GET',
+                'headers': {
+                    'Accept': r'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                },
+                'response': 'html',
+            },
+        'init2':
+            {
+                'url': r'https://kyfw.12306.cn/otn/',
+                'method': 'GET',
+                'headers': {
+                    'Accept': r'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                },
+                'response': 'html',
+            },
+        'init3':
+            {
+                'url': r'https://kyfw.12306.cn/otn/passport?redirect=/otn/',
+                'method': 'GET',
+                'headers': {
+                    'Accept': r'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                },
+                'response': 'html',
+            },
         'init': {
-            'url': r'https://kyfw.12306.cn/otn/login/init',
+            'url': r'https://kyfw.12306.cn/otn/resources/login.html',
             'method': 'GET',
             'headers': {
                 'Accept': r'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
                 'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init',
             },
             'response': 'html',
+        },
+        'init4': {
+            'url': r'https://kyfw.12306.cn/otn/login/conf',
+            'method': 'POST',
+            'headers': {
+                'Accept': r'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Referer': r'https://kyfw.12306.cn/otn/resources/login.html',
+            }
+        },
+        'init5': {
+            'url': r'https://kyfw.12306.cn/otn/index12306/getLoginBanner',
+            'method': 'GET',
+            'headers': {
+                'Accept': r'text/plain, */*; q=0.01',
+                'Referer': r'https://kyfw.12306.cn/otn/resources/login.html',
+            }
         },
         'uamtk': {
             'url': r'https://kyfw.12306.cn/passport/web/auth/uamtk',
@@ -34,10 +77,10 @@ LOGIN_URLS = {
         },
         'captchaCheck': {
             'url': r'https://kyfw.12306.cn/passport/captcha/captcha-check',
-            # 2019.01.06 use get method.
-            'method': 'GET',
+            # 2019.03.28 use post method.
+            'method': 'POST',
             'headers': {
-                'Referer': r'https://kyfw.12306.cn/otn/login/init',
+                'Referer': r'https://kyfw.12306.cn/otn/resources/login.html',
             },
             'response': 'json'
         },
@@ -46,14 +89,14 @@ LOGIN_URLS = {
             'method': 'POST',
             'headers': {
                 'X-Requested-With': 'xmlHttpRequest',
-                'Referer': 'https://kyfw.12306.cn/otn/login/init',
+                'Referer': 'https://kyfw.12306.cn/otn/resources/login.html',
             }
         },
         'userLogin': {
             'url': r'https://kyfw.12306.cn/otn/login/userLogin',
             'method': 'POST',
             'headers': {
-                'Referer': 'https://kyfw.12306.cn/otn/login/init',
+                'Referer': 'https://kyfw.12306.cn/otn/resources/login.html',
             },
             'response': 'html',
         },
@@ -88,7 +131,7 @@ LOGIN_URLS = {
     # --------------------------------------------------------------------------------------------------------
     'other': {
         'init': {
-            'url': r'https://kyfw.12306.cn/otn/login/init',
+            'url': r'https://kyfw.12306.cn/otn/resources/login.html',
             'method': 'GET',
             'headers': {
                 'Accept': r'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -346,11 +389,21 @@ ORDER_NO_COMPLETE_URL = {
     }
 }
 
+DEVICE_FINGERPRINT_URL = {
+    'url': r'https://kyfw.12306.cn/otn/HttpZF/logdevice',
+    'method': 'GET',
+    'headers': {
+        'Referer': r'https://kyfw.12306.cn/otn/passport?redirect=/otn/'
+    },
+    'type': 'text'
+}
+
 
 USER_CHECK_URL_MAPPING = UrlMapping(USER_CHECK_URL)
 PASSENGER_URL_MAPPING = UrlMapping(PASSENGER_URL)
 LOGIN_URL_MAPPING = {key: {key1: UrlMapping(v1) for key1, v1 in v.items()} for key, v in LOGIN_URLS.items()}
 QUERY_URL_MAPPING = UrlMapping(QUERY_URL)
+DEVICE_FINGERPRINT_MAPPING = UrlMapping(DEVICE_FINGERPRINT_URL)
 SUBMIT_URL_MAPPING = {key: {key1: UrlMapping(v1) for key1, v1 in v.items()} for key, v in SUBMIT_URLS.items()}
 FAST_SUBMIT_URL_MAPPING = {key: UrlMapping(v) for key, v in FAST_SUBMIT_URLS.items()}
 ORDER_NO_COMPLETE_MAPPING = UrlMapping(ORDER_NO_COMPLETE_URL)

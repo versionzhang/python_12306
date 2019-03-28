@@ -1,6 +1,7 @@
 import ast
 import base64
 from io import BytesIO
+from itertools import chain
 from json import JSONDecodeError
 from PIL import Image
 
@@ -87,9 +88,9 @@ class NormalCaptchaUtil(object):
         }
         while True:
             try:
-                json_response = send_captcha_requests(LOGIN_SESSION,
+                json_response = send_requests(LOGIN_SESSION,
                                                       LOGIN_URL_MAPPING["normal"]["captchaCheck"],
-                                                      params=params_data)
+                                                      data=params_data)
                 break
             except (ResponseCodeError, ResponseError):
                 Log.v("提交验证码错误, 重新提交验证码验证")
@@ -197,7 +198,11 @@ class Captcha(object):
             data = ast.literal_eval(v.json()["res"])
         except KeyError:
             return False, "免费打码接口返回出现问题"
-        return self.check(data)
+        if type(data[0]) == int:
+            self.results = ','.join(map(str, list(data)))
+        else:
+            self.results = ','.join(map(str, list(chain(*data))))
+        return self.check(self.results)
 
     def verifyhandle_ruokuai(self):
         c = RClient()

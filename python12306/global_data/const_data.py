@@ -104,6 +104,8 @@ FREE_CAPTCHA_HEADERS = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36",
 }
 
+DEVICE_FINGERPRINT = "algID=9VTu8J3Cya&hashCode=VLL9HVCtHYaBH6ezOfHwKYaVo6gPp3XKu-JVG06g29Y&FMQw=0&q4f3=zh-CN&VPIf=1&custID=133&VEek=unknown&dzuS=0&yD16=0&EOQP=fdab098ff58158f73d1f6a9052936019&lEnu=3232256537&jp76=52d67b2a5aa5e031084733d5006cc664&hAqN=Win32&platform=WEB&ks0Q=d22ca0b81584fbea62237b14bd04c866&TeRS=1040x1920&tOHY=24xx1080x1920&Fvje=i1l1o1s1&q5aJ=-8&wNLf=99115dfb07133750ba677d055874de87&0aew=Mozilla/5.0%20(Windows%20NT%206.1;%20Win64;%20x64)%20AppleWebKit/537.36%20(KHTML,%20like%20Gecko)%20Chrome/73.0.3683.86%20Safari/537.36&E3gR=e03245ea4cc21cf9bd59da053b429fc6&timestamp=1553749743355"
+
 def find_by_phrase(msg):
     data = list(filter(lambda x: msg in x["msg"], SUBMIT_ERR_MESSAGES_LIST))
     if data:

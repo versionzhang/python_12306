@@ -1,4 +1,5 @@
 import copy
+import time
 import xml.etree.ElementTree as ET
 from urllib.parse import urljoin
 
@@ -96,6 +97,7 @@ def get_captcha_image(session, urlmapping_obj, params=None, data=None, **kwargs)
 
 
 def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
+    time.sleep(0.5)
     session.headers.update(urlmapping_obj.headers)
     if urlmapping_obj.method.lower() == 'post':
         session.headers.update(
@@ -151,7 +153,7 @@ def send_requests(session, urlmapping_obj, params=None, data=None, **kwargs):
                 root = ET.fromstring(data)
                 result = {v.tag: v.text for v in root.getchildren()}
                 return result
-            if 'json' in response.headers['Content-Type']:
+            if 'json' in response.headers['Content-Type'] and urlmapping_obj.type.lower() != 'text':
                 result = response.json()
                 Log.d("{url} 返回值 {result}".format(url=response.url,
                                                   result=result))
