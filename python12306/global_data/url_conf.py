@@ -181,7 +181,7 @@ LOGIN_URLS = {
 }
 
 QUERY_URL = {
-    'url': r'https://kyfw.12306.cn/otn/leftTicket/queryZ',
+    'url': r'https://kyfw.12306.cn/otn/leftTicket/query',
     'method': 'GET',
     'headers': {
         'Referer': r'https://kyfw.12306.cn/otn/leftTicket/init'
