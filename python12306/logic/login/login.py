@@ -3,6 +3,8 @@ import re
 import time
 from urllib import parse
 
+from selenium import webdriver
+
 from python12306.global_data.session import LOGIN_SESSION
 from python12306.global_data.const_data import DEVICE_FINGERPRINT
 
@@ -18,18 +20,24 @@ class NormalLogin(object):
     URLS = LOGIN_URL_MAPPING["normal"]
 
     def _init(self):
-        send_requests(LOGIN_SESSION, self.URLS["init1"])
-        send_requests(LOGIN_SESSION, self.URLS["init2"])
-        send_requests(LOGIN_SESSION, self.URLS["init3"])
-
-    def _init2(self):
-        json_data = send_requests(LOGIN_SESSION, self.URLS["uamtk"], data={'appid': 'otn'})
-        Log.d(json_data)
-        send_requests(LOGIN_SESSION, self.URLS["init"])
-        send_requests(LOGIN_SESSION, self.URLS["init4"])
-        send_requests(LOGIN_SESSION, self.URLS["init5"])
-        send_requests(LOGIN_SESSION, self.URLS["init6"], data={'appid': 'otn'})
-        send_requests(LOGIN_SESSION, self.URLS["init7"], data={'appid': 'otn'})
+        Log.v("由于12306采取用设备指纹来校验访问, 现使用selenium获取完整cookie")
+        options = webdriver.ChromeOptions()
+        options.add_argument('headless')
+        options.add_argument("incognito")
+        driver = webdriver.Chrome(options=options)
+        # first clear selenium cache
+        driver.get("https://kyfw.12306.cn/")
+        time.sleep(6)
+        cookies = driver.get_cookies()
+        driver.quit()
+        if "RAIL_DEVICEID" not in [v["name"] for v in cookies] \
+            or "RAIL_EXPIRATION" not in [v["name"] for v in cookies]:
+            return False, "设备指纹未获取到"
+        for v in cookies:
+            v.pop('httpOnly', None)
+            v.pop('expiry', None)
+            LOGIN_SESSION.cookies.set(**v)
+        return True, "已经获取设备指纹"
 
     def _get_device_fingerprint(self):
         if not hasattr(Config, "device_fingerprint"):
@@ -78,12 +86,14 @@ class NormalLogin(object):
         return status, msg
 
     def login(self):
-        self._init()
-        status, msg = self._get_device_fingerprint()
+        status, msg = self._init()
         if not status:
-            Log.v("设备ID获取失败")
             return status, msg
-        self._init2()
+        # status, msg = self._get_device_fingerprint()
+        # if not status:
+        #     Log.v("设备ID获取失败")
+        #     return status, msg
+        # self._init2()
         captcha = Captcha("normal")
         status, msg = captcha.verify()
         if not status:

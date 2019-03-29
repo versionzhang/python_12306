@@ -6,5 +6,8 @@ colorama
 namedtupled
 PyYAML
 
+# 2019.3.29
+selenium
+
 cached-property
 # ipython # for debug
