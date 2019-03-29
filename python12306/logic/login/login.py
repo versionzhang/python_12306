@@ -28,6 +28,8 @@ class NormalLogin(object):
         send_requests(LOGIN_SESSION, self.URLS["init"])
         send_requests(LOGIN_SESSION, self.URLS["init4"])
         send_requests(LOGIN_SESSION, self.URLS["init5"])
+        send_requests(LOGIN_SESSION, self.URLS["init6"], data={'appid': 'otn'})
+        send_requests(LOGIN_SESSION, self.URLS["init7"], data={'appid': 'otn'})
 
     def _get_device_fingerprint(self):
         if not hasattr(Config, "device_fingerprint"):

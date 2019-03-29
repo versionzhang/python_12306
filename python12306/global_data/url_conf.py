@@ -58,6 +58,22 @@ LOGIN_URLS = {
                 'Referer': r'https://kyfw.12306.cn/otn/resources/login.html',
             }
         },
+        'init6': {
+            'url': r'https://kyfw.12306.cn/passport/web/auth/uamtk-static',
+            'method': 'POST',
+            'headers': {
+                'Accept': r'*/*',
+                'Referer': r'https://kyfw.12306.cn/otn/resources/login.html',
+            }
+        },
+        'init7': {
+            'url': r'https://kyfw.12306.cn/passport/web/create-qr64',
+            'method': 'POST',
+            'headers': {
+                'Accept': r'*/*',
+                'Referer': r'https://kyfw.12306.cn/otn/resources/login.html',
+            }
+        },
         'uamtk': {
             'url': r'https://kyfw.12306.cn/passport/web/auth/uamtk',
             'method': 'POST',

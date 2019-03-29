@@ -198,6 +198,8 @@ class Captcha(object):
             data = ast.literal_eval(v.json()["res"])
         except KeyError:
             return False, "免费打码接口返回出现问题"
+        except SyntaxError:
+            return False, "免费打码接口返回出现问题"
         if type(data[0]) == int:
             self.results = ','.join(map(str, list(data)))
         else:
