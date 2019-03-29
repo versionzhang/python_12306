@@ -23,11 +23,12 @@ class NormalLogin(object):
         Log.v("由于12306采取用设备指纹来校验访问, 现使用selenium获取完整cookie")
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
-        options.add_argument("incognito")
+        options.add_argument("-incognito")
         driver = webdriver.Chrome(options=options)
+        driver.implicitly_wait(15)
         # first clear selenium cache
-        driver.get("https://kyfw.12306.cn/")
-        time.sleep(6)
+        driver.get("https://kyfw.12306.cn")
+        time.sleep(3)
         cookies = driver.get_cookies()
         driver.quit()
         if "RAIL_DEVICEID" not in [v["name"] for v in cookies] \
@@ -37,6 +38,7 @@ class NormalLogin(object):
             v.pop('httpOnly', None)
             v.pop('expiry', None)
             LOGIN_SESSION.cookies.set(**v)
+        Log.v("已经获取设备指纹")
         return True, "已经获取设备指纹"
 
     def _get_device_fingerprint(self):
@@ -86,9 +88,11 @@ class NormalLogin(object):
         return status, msg
 
     def login(self):
-        status, msg = self._init()
-        if not status:
-            return status, msg
+        if not LOGIN_SESSION.cookies.get("RAIL_EXPIRATION") or \
+           not LOGIN_SESSION.cookies.get("RAIL_DEVICEID"):
+            status, msg = self._init()
+            if not status:
+                return status, msg
         # status, msg = self._get_device_fingerprint()
         # if not status:
         #     Log.v("设备ID获取失败")
