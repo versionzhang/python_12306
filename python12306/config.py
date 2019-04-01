@@ -10,7 +10,7 @@ def parsing_config():
     """
     path = os.path.join(os.getcwd(), 'config.yaml')
     with open(path, 'r', encoding='utf-8') as f:
-        s = yaml.load(f)
+        s = yaml.safe_load(f)
     return s
 
 
