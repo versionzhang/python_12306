@@ -3,6 +3,9 @@ import re
 import time
 from urllib import parse
 
+from selenium import webdriver
+from selenium.webdriver.support.wait import WebDriverWait
+
 from python12306.global_data.session import LOGIN_SESSION
 from python12306.global_data.const_data import DEVICE_FINGERPRINT
 
@@ -11,25 +14,54 @@ from python12306.global_data.url_conf import LOGIN_URL_MAPPING, DEVICE_FINGERPRI
 from python12306.logic.login.captcha import Captcha
 from python12306.utils.log import Log
 from python12306.utils.net import send_requests, json_status
+from python12306.utils.data_loader import LocalSimpleCache
 
+
+def get_fingerprint(driver):
+    return driver.current_url == "https://kyfw.12306.cn/otn/resources/login.html"
 
 class NormalLogin(object):
     __session = LOGIN_SESSION
     URLS = LOGIN_URL_MAPPING["normal"]
 
     def _init(self):
-        send_requests(LOGIN_SESSION, self.URLS["init1"])
-        send_requests(LOGIN_SESSION, self.URLS["init2"])
-        send_requests(LOGIN_SESSION, self.URLS["init3"])
+        s = LocalSimpleCache([], "device_pickle.pickle", expire_time=24)
+        load = s.get_final_data()
 
-    def _init2(self):
-        json_data = send_requests(LOGIN_SESSION, self.URLS["uamtk"], data={'appid': 'otn'})
-        Log.d(json_data)
-        send_requests(LOGIN_SESSION, self.URLS["init"])
-        send_requests(LOGIN_SESSION, self.URLS["init4"])
-        send_requests(LOGIN_SESSION, self.URLS["init5"])
-        send_requests(LOGIN_SESSION, self.URLS["init6"], data={'appid': 'otn'})
-        send_requests(LOGIN_SESSION, self.URLS["init7"], data={'appid': 'otn'})
+        if not load.raw_data:
+            Log.v("由于12306采取用设备指纹来校验访问, 现使用selenium获取完整cookie")
+            options = webdriver.ChromeOptions()
+            options.add_argument('--headless')
+            options.add_argument("--incognito")
+            options.add_argument("--disable-databases")
+            options.add_argument("--disable-gpu-compositing")
+            options.add_argument("--disable-application-cache")
+            driver = webdriver.Chrome(options=options)
+            driver.implicitly_wait(15)
+            # first clear selenium cache
+            driver.get("https://kyfw.12306.cn")
+            wait = WebDriverWait(driver, 10)
+            wait.until(get_fingerprint)
+
+            cookies = driver.get_cookies()
+            driver.quit()
+            if "RAIL_DEVICEID" not in [v["name"] for v in cookies] \
+                or "RAIL_EXPIRATION" not in [v["name"] for v in cookies]:
+                return False, "设备指纹未获取到"
+            s.raw_data = [v for v in cookies]
+            Log.v("导出包含设备指纹的cookie")
+            s.export_pickle()
+        else:
+            Log.v("使用缓存过的cookie")
+            cookies = load.raw_data
+            print(cookies)
+
+        for v in cookies:
+            v.pop('httpOnly', None)
+            v.pop('expiry', None)
+            LOGIN_SESSION.cookies.set(**v)
+        Log.v("已经获取设备指纹")
+        return True, "已经获取设备指纹"
 
     def _get_device_fingerprint(self):
         if not hasattr(Config, "device_fingerprint"):
@@ -78,12 +110,16 @@ class NormalLogin(object):
         return status, msg
 
     def login(self):
-        self._init()
-        status, msg = self._get_device_fingerprint()
-        if not status:
-            Log.v("设备ID获取失败")
-            return status, msg
-        self._init2()
+        if not LOGIN_SESSION.cookies.get("RAIL_EXPIRATION") or \
+           not LOGIN_SESSION.cookies.get("RAIL_DEVICEID"):
+            status, msg = self._init()
+            if not status:
+                return status, msg
+        # status, msg = self._get_device_fingerprint()
+        # if not status:
+        #     Log.v("设备ID获取失败")
+        #     return status, msg
+        # self._init2()
         captcha = Captcha("normal")
         status, msg = captcha.verify()
         if not status:

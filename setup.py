@@ -34,6 +34,7 @@ setup(
         "colorama",
         "namedtupled",
         "PyYAML",
+        "selenium",
         "cached-property"
     ],
     entry_points={

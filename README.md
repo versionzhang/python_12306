@@ -104,6 +104,14 @@ weixin_sckey: server酱key
 auto_code_method: freeapi
 ```
 
+**2019.4.1 添加使用selenium(使用chrome driver)进行获取完整的cookie**
+
+```
+由于12306添加了设备指纹的识别,所以传统的登录请求直接去登录是失败率极高,所以现在采用的是selenium去获取对应的设备指纹.
+需要更新依赖包,然后配置selenium,具体的配置可以参考网上的教程.
+代码里面使用的无头浏览器是chrome.
+```
+
 ## python版本支持
 
 3.5以上
