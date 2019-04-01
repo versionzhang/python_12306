@@ -54,7 +54,6 @@ class NormalLogin(object):
         else:
             Log.v("使用缓存过的cookie")
             cookies = load.raw_data
-            print(cookies)
 
         for v in cookies:
             v.pop('httpOnly', None)
