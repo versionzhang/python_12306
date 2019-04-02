@@ -47,7 +47,9 @@ class Dispatcher(object):
         return datetime.timedelta(minutes=Config.presale_config.continue_time)
 
     def check_current_mode(self):
-        if (not Config.presale_enable) or self.pre_sale_end:
+        if not Config.presale_enable:
+            return False
+        if self.pre_sale_end:
             return False
         else:
             now = datetime.datetime.now()
@@ -65,20 +67,21 @@ class Dispatcher(object):
 
     @property
     def query_travel_dates(self):
+        if not Config.presale_enable:
+            return Config.basic_config.travel_dates
         self.pre_sale_flag = self.check_current_mode()
         if self.pre_sale_flag:
             return [Config.presale_config.travel_date]
         else:
             if self.pre_sale_end:
-                if Config.presale_enable and Config.presale_config.travel_date not in Config.basic_config.travel_dates:
+                if Config.presale_config.travel_date not in Config.basic_config.travel_dates:
                     return Config.basic_config.travel_dates + [Config.presale_config.travel_date]
                 else:
                     return Config.basic_config.travel_dates
             else:
                 open_times = list(map(format_time, Config.presale_config.start_times))
                 if datetime.datetime.now() > min(open_times) + self.delta_continue_time:
-                    if Config.presale_enable and \
-                            Config.presale_config.travel_date not in Config.basic_config.travel_dates:
+                    if Config.presale_config.travel_date not in Config.basic_config.travel_dates:
                         return Config.basic_config.travel_dates + [Config.presale_config.travel_date]
                     else:
                         return Config.basic_config.travel_dates
