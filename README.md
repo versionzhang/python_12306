@@ -36,11 +36,8 @@ Python 12306 抢票小工具
 - [x] 添加多线程查票模式 (由于查询过于频繁, 可能会被12306限制, 预售的时候建议不要使用)
 - [x] CDN加速
 - [x] 多组出发到达站配置, 具体参考配置文件`config.yaml_example`
-
-## TODO List
-
-- [ ] 代理(待定)
-- [ ] web管理后台自动生成项目配置
+- [x] 代理(已完成,目前此功能在对应的后台管理程序中集成),项目地址[webadmin](https://github.com/versionzhang/python_12306_web)
+- [x] web管理后台自动生成项目配置(已完成,目前此功能在对应的后台管理程序中集成),项目地址[webadmin](https://github.com/versionzhang/python_12306_web)
 
 ## Usage
 
