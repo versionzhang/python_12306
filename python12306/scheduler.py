@@ -141,8 +141,6 @@ class Schedule(object):
 
     def notice_user(self):
         if self.order_id:
-            Log.v("抢票成功，{notice}".format(
-                notice="你已开启邮箱配置，稍后会收到邮件通知" if Config.email_notice_enable else "如需邮件通知请先配置"))
             Log.v("车票信息：")
             for order_ticket in self.order_tickets:
                 print(order_ticket)
@@ -185,6 +183,7 @@ class Schedule(object):
                 self.online_checker_now()
 
     def run(self):
+        self.maintain_mode()
         status = self.pre_check()
         if not status:
             return
@@ -207,8 +206,8 @@ class Schedule(object):
                 n = datetime.datetime.now()
                 data = DispatcherTool.run(query_params)
                 count += 1
-                self.submit_order(data)
                 DispatcherTool.output_delta_time(n)
+                self.submit_order(data)
                 if self.order_id or self.unfinished_order:
                     break
             if self.order_id or self.unfinished_order:

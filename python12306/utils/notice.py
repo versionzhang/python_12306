@@ -47,6 +47,8 @@ class NoticeCollections(object):
         if not Config.weixin_notice_enable:
             Log.v("未开启微信通知")
             return
+        Log.v("{notice}".format(
+            notice="你已开启微信通知，稍后会收到推送"))
         url = "https://sc.ftqq.com/{key}.send".format(key=Config.weixin_sckey)
         data = MESSAGES[msg_type]
         subject = data["subject"]
@@ -69,7 +71,10 @@ class NoticeCollections(object):
         if not Config.email_notice_enable:
             Log.v("未开启邮箱通知")
         else:
+            Log.v("{notice}".format(
+                notice="你已开启邮件通知，稍后会收到邮件"))
             data = MESSAGES[msg_type]
+            Log.v("正在发送邮件...")
             try:
                 sender = email_conf.from_email
                 receiver = email_conf.notice_email_list

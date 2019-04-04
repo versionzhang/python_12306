@@ -17,12 +17,13 @@ class Schedule(BaseSchedule):
     def batch_tasks(self, query_data):
         n = datetime.datetime.now()
         data = DispatcherTool.run(query_data)
+        DispatcherTool.output_delta_time(n)
         self.submit_order(data)
         if self.order_id:
             self.pool.close()
-        DispatcherTool.output_delta_time(n)
 
     def run(self):
+        self.maintain_mode()
         self.pre_check()
         while True:
             self.maintain_mode()
